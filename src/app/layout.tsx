@@ -38,29 +38,9 @@ export default function RootLayout({
         
         {/* 扁平背景 - 无渐变光晕 */}
 
-        {/* 玻璃态导航栏 */}
-        <header className="fixed top-0 left-0 right-0 z-50 glass-header">
-          <div className="mx-auto px-6 h-16 flex items-center justify-between">
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-3">
-              <img
-                src="/nanocats_logo.png"
-                alt="Nanocats"
-                className="h-10 w-auto object-contain"
-              />
-            </Link>
-            {/* Navigation */}
-            <nav className="flex items-center gap-1">
-              <NavLink href="/" label="Agents" />
-            </nav>
-          </div>
-        </header>
-
-        {/* 主内容区 - 为固定导航栏留出空间 */}
-        <main className="pt-16 min-h-screen">
-          <div className="mx-auto px-6 py-8">
-            {children}
-          </div>
+        {/* 主内容区 */}
+        <main className="min-h-screen">
+          {children}
         </main>
       </body>
     </html>

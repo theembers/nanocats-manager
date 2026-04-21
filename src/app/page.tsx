@@ -1,25 +1,20 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import Link from "next/link";
-
-import { AgentCard } from "@/components/agent-card";
-import { StartupLogPanel } from "@/components/startup-log-panel";
-
+import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import { WorkspacePanel } from "@/components/workspace-panel";
+import { ConfigPanel } from "@/components/config-panel";
 import { AgentInstance } from "@/lib/types";
 
-// 动画延迟工具
-const staggerDelay = (index: number) => ({ animationDelay: `${index * 0.1}s` });
+type TabType = "workspace" | "config";
 
 export default function DashboardPage() {
   const [agents, setAgents] = useState<AgentInstance[]>([]);
   const [loading, setLoading] = useState(true);
-  const [nanobotVersion, setNanobotVersion] = useState<string | null>(null);
-  const [versionLoading, setVersionLoading] = useState(false);
-  const [updating, setUpdating] = useState(false);
-  const [updateMessage, setUpdateMessage] = useState<string | null>(null);
-  const [bulkAction, setBulkAction] = useState<"start" | "stop" | null>(null);
-  const [stopConfirm, setStopConfirm] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabType>("workspace");
+  const [workspaceAgents, setWorkspaceAgents] = useState<AgentInstance[]>([]);
+  const [configAgents, setConfigAgents] = useState<AgentInstance[]>([]);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const fetchAgents = useCallback(async () => {
     try {
@@ -35,333 +30,129 @@ export default function DashboardPage() {
     }
   }, []);
 
-  const fetchNanobotVersion = useCallback(async (forceRefresh = false) => {
-    try {
-      setVersionLoading(true);
-      const url = forceRefresh ? "/api/nanobot/version?refresh=true" : "/api/nanobot/version";
-      const res = await fetch(url);
-      if (res.ok) {
-        const data = await res.json();
-        setNanobotVersion(data.version);
-      }
-    } catch (error) {
-      console.error("Failed to fetch nanobot version:", error);
-      setNanobotVersion(null);
-    } finally {
-      setVersionLoading(false);
-    }
-  }, []);
-
-  const handleStartAll = async () => {
-    try {
-      setBulkAction("start");
-      const res = await fetch("/api/agents/start-all", { method: "POST" });
-      if (res.ok) {
-        await fetchAgents();
-      }
-    } catch (error) {
-      console.error("Failed to start all agents:", error);
-    } finally {
-      setBulkAction(null);
-    }
-  };
-
-  const handleStopAll = async () => {
-    try {
-      setBulkAction("stop");
-      const res = await fetch("/api/agents/stop-all", { method: "POST" });
-      if (res.ok) {
-        await fetchAgents();
-      }
-    } catch (error) {
-      console.error("Failed to stop all agents:", error);
-    } finally {
-      setBulkAction(null);
-    }
-  };
-
-  const handleUpdateNanobot = async () => {
-    try {
-      setUpdating(true);
-      setUpdateMessage(null);
-      const res = await fetch("/api/nanobot/update", { method: "POST" });
-      const data = await res.json();
-      if (res.ok) {
-        setUpdateMessage("更新成功");
-        // 更新成功后强制刷新版本（清除缓存重新查找二进制文件）
-        setTimeout(() => fetchNanobotVersion(true), 500);
-      } else {
-        setUpdateMessage(`更新失败: ${data.error || "未知错误"}`);
-      }
-    } catch {
-      setUpdateMessage("更新失败: 网络错误");
-    } finally {
-      setUpdating(false);
-      // 3秒后清除消息
-      setTimeout(() => setUpdateMessage(null), 3000);
-    }
-  };
-
   useEffect(() => {
     fetchAgents();
-    fetchNanobotVersion();
-    // Agents 轮询：10秒
-    const agentsInterval = setInterval(fetchAgents, 10000);
-    return () => {
-      clearInterval(agentsInterval);
-    };
-  }, [fetchAgents, fetchNanobotVersion]);
+    const interval = setInterval(fetchAgents, 10000);
+    return () => clearInterval(interval);
+  }, [fetchAgents]);
 
-  const runningCount = agents.filter((a) => a.status === "running").length;
-  const stoppedCount = agents.filter((a) => a.status === "stopped").length;
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "copy";
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+
+    try {
+      const agentData = e.dataTransfer.getData("application/json");
+      if (!agentData) return;
+
+      const agent: AgentInstance = JSON.parse(agentData);
+      const agentName = agent.name;
+
+      const maxAgents = 6;
+      if (activeTab === "workspace") {
+        setWorkspaceAgents(prev => {
+          if (prev.find(a => a.name === agentName)) return prev;
+          if (prev.length >= maxAgents) return prev;
+          return [...prev, agent];
+        });
+      } else {
+        setConfigAgents(prev => {
+          if (prev.find(a => a.name === agentName)) return prev;
+          if (prev.length >= maxAgents) return prev;
+          return [...prev, agent];
+        });
+      }
+    } catch (error) {
+      console.error("Failed to process dropped agent:", error);
+    }
+  };
+
+  const removeFromWorkspace = (agentName: string) => {
+    setWorkspaceAgents(prev => prev.filter(a => a.name !== agentName));
+  };
+
+  const removeFromConfig = (agentName: string) => {
+    setConfigAgents(prev => prev.filter(a => a.name !== agentName));
+  };
 
   return (
-    <div>
-      {/* Hero Section */}
-      <div className="mb-10 animate-fade-in-up" style={{ animationDelay: "0s" }}>
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-          <div>
-            <h1 className="font-heading text-4xl sm:text-5xl font-bold text-white mb-2 tracking-tight">
-              Dashboard
-            </h1>
-            <p className="text-zinc-400 text-lg">
-              Manage and monitor your nanobot agent instances
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            {/* Nanobot Version & Update */}
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-800/50 border border-white/10">
-              <span className="text-zinc-300 text-sm font-mono">
-                {versionLoading ? "..." : (nanobotVersion || "Unknown")}
-              </span>
-              <button
-                onClick={handleUpdateNanobot}
-                disabled={updating}
-                className="ml-1 p-1.5 rounded-md bg-zinc-700 hover:bg-zinc-600 text-zinc-400 hover:text-white transition-all duration-200 disabled:opacity-50"
-                title="更新 Nanobot"
-              >
-                <UpdateIcon className={`w-3.5 h-3.5 ${updating ? "animate-spin" : ""}`} />
-              </button>
-            </div>
-            {updateMessage && (
-              <span className={`text-xs ${updateMessage.includes("成功") ? "text-green-400" : "text-red-400"}`}>
-                {updateMessage}
-              </span>
-            )}
-            <Link href="/agents/new">
-              <button className="h-10 px-5 rounded-lg bg-orange-500/20 border border-orange-500/50 text-orange-300 hover:bg-orange-500/30 hover:border-orange-400 font-medium flex items-center gap-2 transition-all">
-                <PlusIcon className="w-4 h-4" />
-                New Agent
-              </button>
-            </Link>
-          </div>
-        </div>
+    <div className="h-screen flex overflow-hidden">
+      <div className="w-[280px] flex-shrink-0">
+        <DashboardSidebar agents={agents} onStatusChange={fetchAgents} />
       </div>
 
-      {/* Overview Section */}
-      <div className="mb-8">
-        <div className="flex items-center gap-2 mb-4">
-          <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest">Overview</span>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
-          {/* Agents Stats Card */}
-          <div className="bg-zinc-900/90 p-6 rounded-xl min-h-[138px] flex flex-col" style={{ animationDelay: "0.1s" }}>
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-orange-500/70 text-[11px] font-semibold mb-2 uppercase tracking-widest">Agents</p>
-                <p className="font-heading text-4xl font-bold text-orange-400">{agents.length}</p>
-              </div>
-              <div className="p-3 rounded-lg bg-orange-500/10 text-orange-400">
-                <BoxesIcon className="w-5 h-5" />
-              </div>
-            </div>
-            <div className="flex gap-4 mt-auto pt-4 border-t border-zinc-800/50">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-orange-400" />
-                <span className="text-sm text-zinc-400">
-                  <span className="text-white font-semibold">{runningCount}</span> Running
+      <div
+        className="flex-1 flex flex-col overflow-hidden"
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        <div className="h-14 px-4 flex items-center justify-end gap-4 border-b border-white/5">
+          {workspaceAgents.length > 0 && (
+            <div className="flex items-center gap-1">
+              <span className="px-3 py-1.5 rounded-lg bg-orange-500/20 text-orange-400 text-sm font-medium border border-orange-500/30">
+                <WorkspaceIcon className="w-4 h-4 inline mr-1.5" />
+                Workspace
+                <span className="ml-1.5 px-1.5 py-0.5 rounded bg-orange-500/30 text-xs">
+                  {workspaceAgents.length}
                 </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-zinc-600" />
-                <span className="text-sm text-zinc-400">
-                  <span className="text-white font-semibold">{stoppedCount}</span> Stopped
-                </span>
-              </div>
+              </span>
             </div>
-            <div className="flex gap-2 mt-4">
-              <button
-                onClick={handleStartAll}
-                disabled={bulkAction !== null || runningCount === agents.length}
-                className="flex-1 h-8 rounded-lg bg-green-500/15 border border-green-500/30 text-green-400 hover:bg-green-500/25 hover:border-green-400/50 text-xs font-medium flex items-center justify-center gap-1.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                {bulkAction === "start" ? (
-                  <LoadingIcon className="w-3 h-3 animate-spin" />
-                ) : (
-                  <PlayIcon className="w-3 h-3" />
-                )}
-                Start All
-              </button>
-              <button
-                onClick={() => {
-                  if (stopConfirm) {
-                    handleStopAll();
-                    setStopConfirm(false);
-                  } else {
-                    setStopConfirm(true);
-                    setTimeout(() => setStopConfirm(false), 3000);
-                  }
-                }}
-                disabled={bulkAction !== null || runningCount === 0}
-                className={`flex-1 h-8 rounded-lg text-xs font-medium flex items-center justify-center gap-1.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
-                  stopConfirm
-                    ? "bg-red-500/30 border-red-400/60 text-red-300 hover:bg-red-500/40 hover:border-red-400"
-                    : "bg-red-500/15 border-red-500/30 text-red-400 hover:bg-red-500/25 hover:border-red-400/50"
-                }`}
-              >
-                {bulkAction === "stop" ? (
-                  <LoadingIcon className="w-3 h-3 animate-spin" />
-                ) : stopConfirm ? (
-                  <WarningIcon className="w-3 h-3" />
-                ) : (
-                  <StopIcon className="w-3 h-3" />
-                )}
-                {stopConfirm ? "Confirm?" : "Stop All"}
-              </button>
-            </div>
-          </div>
-
-          
-        </div>
-      </div>
-
-      {/* Agent Instances Section - glass-card 玻璃态 */}
-      <div className="mb-6">
-        <div className="flex items-center gap-2 mb-4">
-          <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest">Instances</span>
+          )}
         </div>
 
-        {/* Agent Grid */}
-        {loading && agents.length === 0 ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="relative">
-              <div className="w-12 h-12 border-2 border-orange-500/30 border-t-orange-500 rounded-full animate-spin" />
-              <div className="absolute inset-0 w-12 h-12 border-2 border-transparent border-t-amber-500 rounded-full animate-spin" style={{ animationDuration: "1.5s" }} />
-            </div>
-          </div>
-        ) : agents.length === 0 ? (
-          <div className="animate-fade-in-up text-center py-20" style={{ animationDelay: "0.4s" }}>
-            <div className="mx-auto mb-6 opacity-80 flex items-center justify-center">
-              <img
-                src="/nanocats_logo.png"
-                alt="Nanocats"
-                className="h-16 w-auto"
-              />
-            </div>
-            <h3 className="font-heading text-2xl font-semibold text-white mb-3">
-              No agents yet
-            </h3>
-            <p className="text-zinc-400 mb-6 mx-auto">
-              Create your first nanobot agent to start automating your workflows
-            </p>
-            <Link href="/agents/new">
-              <button className="px-6 py-2.5 rounded-lg bg-orange-500/20 border border-orange-500/50 text-orange-300 hover:bg-orange-500/30 hover:border-orange-400 font-medium flex items-center gap-2 mx-auto transition-all">
-                <PlusIcon className="w-4 h-4" />
-                Create Agent
-              </button>
-            </Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {agents.map((agent, index) => (
-              <div
-                key={agent.name}
-                className="animate-fade-in-up"
-                style={staggerDelay(index)}
-              >
-                <AgentCard agent={agent} onStatusChange={fetchAgents} />
+        <div className={`flex-1 overflow-hidden transition-all ${isDragOver ? "bg-orange-500/5" : ""}`}>
+          {isDragOver && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+              <div className="glass-card px-8 py-4 rounded-xl border-2 border-dashed border-orange-500/50">
+                <p className="text-orange-400 font-medium">Drop to add to {activeTab} (max 4)</p>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+            </div>
+          )}
 
-      {/* 启动日志面板 */}
-      <StartupLogPanel />
+          {activeTab === "workspace" ? (
+            <WorkspacePanel
+              activeAgents={workspaceAgents}
+              onRemoveAgent={removeFromWorkspace}
+            />
+          ) : (
+            <ConfigPanel
+              activeAgents={configAgents}
+              onRemoveAgent={removeFromConfig}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 }
 
-// Icon components
-function PlusIcon({ className }: { className?: string }) {
+function WorkspaceIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5 12h14" />
-      <path d="M12 5v14" />
+      <rect width="18" height="18" x="3" y="3" rx="2"/>
+      <path d="M7 7h10"/>
+      <path d="M7 12h10"/>
+      <path d="M7 17h10"/>
     </svg>
   );
 }
 
-function BoxesIcon({ className }: { className?: string }) {
+function SettingsIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M2.97 12.92A2 2 0 0 0 2 14.63v3.24a2 2 0 0 0 .97 1.71l3 1.8a2 2 0 0 0 2.06 0L12 19v-5.5l-5-3-4.03 2.42Z" />
-      <path d="m7 16.5-4.74-2.85" />
-      <path d="m7 16.5 5-3" />
-      <path d="M7 16.5v5.17" />
-      <path d="M12 13.5V19l3.97 2.38a2 2 0 0 0 2.06 0l3-1.8a2 2 0 0 0 .97-1.71v-3.24a2 2 0 0 0-.97-1.71L17 10.5l-5 3Z" />
-      <path d="m17 16.5-5-3" />
-      <path d="m17 16.5 4.74-2.85" />
-      <path d="M17 16.5v5.17" />
-      <path d="M7.97 4.42A2 2 0 0 0 7 6.13v4.37l5 3 5-3V6.13a2 2 0 0 0-.97-1.71l-3-1.8a2 2 0 0 0-2.06 0l-3 1.8Z" />
-      <path d="M12 8 7.26 5.15" />
-      <path d="m12 8 4.74-2.85" />
-      <path d="M12 13.5V8" />
-    </svg>
-  );
-}
-
-function UpdateIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-      <path d="M3 3v5h5" />
-      <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
-      <path d="M16 21h5v-5" />
-    </svg>
-  );
-}
-
-function PlayIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" stroke="none">
-      <polygon points="5 3 19 12 5 21 5 3" />
-    </svg>
-  );
-}
-
-function StopIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" stroke="none">
-      <rect x="4" y="4" width="16" height="16" rx="2" />
-    </svg>
-  );
-}
-
-function LoadingIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-    </svg>
-  );
-}
-
-function WarningIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-      <line x1="12" y1="9" x2="12" y2="13" />
-      <line x1="12" y1="17" x2="12.01" y2="17" />
+      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+      <circle cx="12" cy="12" r="3"/>
     </svg>
   );
 }
