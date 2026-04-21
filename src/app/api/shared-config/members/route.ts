@@ -1,27 +1,18 @@
 import { NextResponse } from "next/server";
-import { getSharedConfigAgents, getManagerAgent } from "@/lib/store";
-import type { AgentInstance } from "@/lib/types";
+import { getAgents } from "@/lib/store";
 
 /**
- * GET /api/shared-config/members - 获取所有成员 agent（manager + member）
+ * GET /api/shared-config/members - 获取所有 agent
  */
 export async function GET() {
   try {
-    const agents = getSharedConfigAgents();
-    const manager = getManagerAgent();
+    const agents = getAgents();
 
     return NextResponse.json({
       members: agents.map((agent) => ({
         name: agent.name,
         status: agent.status,
-        role: agent.role,
       })),
-      manager: manager
-        ? {
-            name: manager.name,
-            status: manager.status,
-          }
-        : null,
     });
   } catch (error) {
     console.error("GET /api/shared-config/members error:", error);

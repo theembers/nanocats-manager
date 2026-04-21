@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAgent, updateAgent, updateAgentRole, softDeleteAgent } from "@/lib/store";
+import { getAgent, updateAgent, softDeleteAgent } from "@/lib/store";
 import { processManager } from "@/lib/process-manager";
 
 interface RouteParams {
@@ -45,7 +45,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const { id: name } = await params;
     const body = await request.json();
-    const { name: newName, port, role } = body;
+    const { name: newName, port } = body;
 
     const agent = getAgent(name);
     if (!agent) {
@@ -55,26 +55,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    // 如果更新了 role，使用专门的 role 更新方法
-    if (role !== undefined) {
-      if (role !== "manager" && role !== "member") {
-        return NextResponse.json(
-          { error: "Invalid role. Must be 'manager' or 'member'" },
-          { status: 400 }
-        );
-      }
-
-      const updatedAgent = updateAgentRole(name, role);
-      if (!updatedAgent) {
-        return NextResponse.json(
-          { error: "Failed to update agent role" },
-          { status: 500 }
-        );
-      }
-      return NextResponse.json(updatedAgent);
-    }
-
-    // 其他字段更新
+    // 字段更新
     const updates: { name?: string; port?: number } = {};
     if (newName !== undefined) updates.name = newName;
     if (port !== undefined) updates.port = port;

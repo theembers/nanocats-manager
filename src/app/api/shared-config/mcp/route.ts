@@ -46,10 +46,10 @@ export async function PUT(request: NextRequest) {
     if (managerName) {
       const { getAgent } = await import("@/lib/store");
       const agent = getAgent(managerName);
-      if (!agent || agent.role !== "manager") {
+      if (!agent) {
         return NextResponse.json(
-          { error: "Only manager agents can modify MCP config" },
-          { status: 403 }
+          { error: "Agent not found" },
+          { status: 404 }
         );
       }
     }

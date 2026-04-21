@@ -423,6 +423,36 @@ class ProcessManager {
   }
 
   /**
+   * 获取进程的内存占用（RSS，单位 KB）
+   * 使用 ps -p <pid> -o rss= 获取
+   */
+  async getMemory(agentName: string): Promise<number | null> {
+    const agent = getAgent(agentName);
+    if (!agent?.pid) {
+      return null;
+    }
+
+    return new Promise((resolve) => {
+      const { spawn } = require("child_process");
+      const ps = spawn("ps", ["-p", String(agent.pid), "-o", "rss="]);
+
+      let output = "";
+      ps.stdout.on("data", (data: Buffer) => {
+        output += data.toString();
+      });
+
+      ps.on("close", () => {
+        const rss = parseInt(output.trim(), 10);
+        resolve(isNaN(rss) ? null : rss);
+      });
+
+      ps.on("error", () => {
+        resolve(null);
+      });
+    });
+  }
+
+  /**
    * 获取进程的日志缓冲区
    * 优先从当前运行的进程获取，进程不存在时从历史日志获取
    */

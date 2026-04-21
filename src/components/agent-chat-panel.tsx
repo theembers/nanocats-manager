@@ -67,14 +67,19 @@ export function AgentChatPanel({ agent, onClose }: AgentChatPanelProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const wsRef = useRef<WebSocket | null>(null);
-  const sessionIdRef = useRef<string>(`ws_${agent.name}_${Date.now()}`);
+  const sessionIdRef = useRef<string>("");
+
+  // Initialize session ID only on client to avoid hydration mismatch
+  useEffect(() => {
+    sessionIdRef.current = `ws_${agent.name}_${Date.now()}`;
+  }, [agent.name]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Generate DiceBear avatar SVG
   const avatarSvg = (() => {
     const avatar = createAvatar(identicon, {
       seed: agent.name,
-      size: 64,
+      size: 32,
     });
     return avatar.toString();
   })();
@@ -539,20 +544,17 @@ function PanelHeader({ agent, onClose, avatarSvg, showConfig, onToggleConfig }: 
   showConfig: boolean;
   onToggleConfig: () => void;
 }) {
-  const statusBorderColor = {
-    running: "border-green-500",
-    stopped: "border-zinc-500",
-    error: "border-red-500",
-  }[agent.status] || "border-zinc-500";
+  const statusDotColor = {
+    running: "bg-green-500",
+    stopped: "bg-zinc-500",
+    error: "bg-red-500",
+  }[agent.status] || "bg-zinc-500";
 
   return (
     <div className="flex items-center gap-2.5 p-2 border-b border-white/5">
       <div className="relative">
         <div
-          className={cn(
-            "w-8 h-8 rounded-full overflow-hidden bg-zinc-700 flex items-center justify-center cursor-pointer border-2",
-            statusBorderColor
-          )}
+          className="w-8 h-8 rounded-full overflow-hidden bg-zinc-700 cursor-pointer"
           dangerouslySetInnerHTML={{ __html: avatarSvg }}
         />
         <button
@@ -566,14 +568,10 @@ function PanelHeader({ agent, onClose, avatarSvg, showConfig, onToggleConfig }: 
           <ConfigIcon className={cn("w-4 h-4", showConfig ? "text-white" : "text-white/80 opacity-0 hover:opacity-100")} />
         </button>
       </div>
-      <h3 className="font-heading font-semibold text-white text-sm uppercase">{agent.name}</h3>
-      {agent.role && (
-        agent.role === "manager" ? (
-          <CrownIcon className="w-3.5 h-3.5 text-orange-400" />
-        ) : (
-          <ShieldIcon className="w-3.5 h-3.5 text-blue-400" />
-        )
-      )}
+      <h3 className="font-heading font-semibold text-white text-sm uppercase flex items-center gap-1.5">
+        {agent.name}
+        <span className={cn("w-2 h-2 rounded-full", statusDotColor)} />
+      </h3>
       <div className="flex-1" />
       <button onClick={onClose} className="p-1 text-zinc-500 hover:text-zinc-300"><CloseIcon className="w-4 h-4" /></button>
     </div>
@@ -919,21 +917,6 @@ function AgentConfigDetail({ agent }: { agent: AgentInstance }) {
         </div>
         <p className="text-xs font-mono text-zinc-300 break-all">{agent.workspacePath}</p>
       </div>
-
-      {agent.role && (
-        <div className="p-3 rounded-lg bg-zinc-800/50 border border-zinc-700/30 mb-3">
-          <div className="flex items-center gap-2 mb-2">
-            <ShieldIcon className="w-4 h-4 text-zinc-500" />
-            <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Role</span>
-          </div>
-          <span className={cn(
-            "inline-block px-2 py-1 rounded text-sm font-medium",
-            agent.role === "manager" ? "bg-orange-500/20 text-orange-400 border border-orange-500/30" : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
-          )}>
-            {agent.role === "manager" ? "Manager" : "Member"}
-          </span>
-        </div>
-      )}
 
       <div className="grid grid-cols-3 gap-2 mt-auto">
         <button

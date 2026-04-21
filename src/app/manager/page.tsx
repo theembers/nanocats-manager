@@ -11,7 +11,6 @@ import { JsonViewer } from "@/components/json-viewer";
 interface MemberInfo {
   name: string;
   status: string;
-  role: "manager" | "member";
 }
 
 export default function ManagerPage() {
@@ -329,15 +328,6 @@ export default function ManagerPage() {
                           }
                         >
                           {member.status}
-                        </Badge>
-                        <Badge
-                          className={
-                            member.role === "manager"
-                              ? "bg-orange-500/20 text-orange-400 border-orange-500/30"
-                              : "bg-blue-500/20 text-blue-400 border-blue-500/30"
-                          }
-                        >
-                          {member.role === "manager" ? "Manager" : "Member"}
                         </Badge>
                       </div>
                       <a

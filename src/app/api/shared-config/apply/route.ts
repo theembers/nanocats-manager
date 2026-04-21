@@ -24,10 +24,10 @@ export async function POST(request: NextRequest) {
     // 验证权限：只有 manager 可以应用配置
     if (managerName) {
       const manager = getAgent(managerName);
-      if (!manager || manager.role !== "manager") {
+      if (!manager) {
         return NextResponse.json(
-          { error: "Only manager agents can apply shared config" },
-          { status: 403 }
+          { error: "Manager agent not found" },
+          { status: 404 }
         );
       }
     }
@@ -46,16 +46,7 @@ export async function POST(request: NextRequest) {
           continue;
         }
 
-        if (agent.role !== "manager" && agent.role !== "member") {
-          results.push({
-            name: agentName,
-            success: false,
-            error: "Agent does not have shared config role",
-          });
-          continue;
-        }
-
-        // 使用新的函数来应用共享配置（支持 manager 和 member）
+        // 应用共享配置
         applySharedConfigToAgent(agent);
         results.push({ name: agentName, success: true });
       } catch (error) {

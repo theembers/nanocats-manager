@@ -1,6 +1,4 @@
-// ==================== Agent Role Types ====================
-
-export type AgentRole = "manager" | "member";
+// ==================== Agent Types ====================
 
 export interface AgentInstance {
   name: string;
@@ -11,7 +9,6 @@ export interface AgentInstance {
   status: "running" | "stopped" | "error";
   pid?: number;
   createdAt: string;
-  role?: AgentRole;  // Agent 角色：manager 或 member
   deleted?: boolean; // 假删除标记
   deletedAt?: string; // 删除时间
 }
@@ -36,12 +33,11 @@ export interface McpConfig {
 
 export interface CreateAgentInput {
   name: string;
-  basePath?: string;  // 默认 ~/nanocats-space/agents/
+  basePath?: string;
   port?: number;
   provider?: string;
   apiKey?: string;
   model?: string;
-  role?: AgentRole;
 }
 
 export interface AgentLog {

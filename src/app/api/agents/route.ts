@@ -8,9 +8,6 @@ import {
   getNextAvailablePort,
   getNextWebchatPort,
   scanAndLoadAgentsFromDisk,
-  setupManagerSkill,
-  setupMemberSymlinks,
-  ensureSharedConfig,
 } from "@/lib/store";
 import { generateConfigFromTemplate } from "@/lib/config-template";
 import { processManager } from "@/lib/process-manager";
@@ -70,7 +67,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, basePath, port, provider, apiKey, model, role } = body;
+    const { name, basePath, port, provider, apiKey, model } = body;
 
     if (!name || typeof name !== "string") {
       return NextResponse.json(
@@ -115,20 +112,9 @@ export async function POST(request: NextRequest) {
       port: finalPort,
       status: "stopped",
       createdAt: new Date().toISOString(),
-      role: role || undefined,
     };
 
     const createdAgent = createAgent(newAgent);
-
-    // 处理角色相关的设置
-    if (role === "manager") {
-      // 为 Manager 安装 nanocats-manager-skill
-      setupManagerSkill(createdAgent);
-    } else if (role === "member") {
-      // 为 Member 建立符号链接到共享配置
-      ensureSharedConfig();
-      setupMemberSymlinks(createdAgent);
-    }
 
     return NextResponse.json(createdAgent, { status: 201 });
   } catch (error) {

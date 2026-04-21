@@ -129,13 +129,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Agent not found" }, { status: 404 });
     }
 
-    if (agent.role !== "manager") {
-      return NextResponse.json(
-        { error: "Only manager agents can add shared skills" },
-        { status: 403 }
-      );
-    }
-
     // 源路径：管理员 agent 的 workspace/skills/{skillPath}
     const sourcePath = path.join(agent.workspacePath, "skills", skillPath);
     const sourceSkillMd = path.join(sourcePath, "SKILL.md");

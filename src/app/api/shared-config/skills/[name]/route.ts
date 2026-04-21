@@ -20,10 +20,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (managerName) {
       const { getAgent } = await import("@/lib/store");
       const agent = getAgent(managerName);
-      if (!agent || agent.role !== "manager") {
+      if (!agent) {
         return NextResponse.json(
-          { error: "Only manager agents can modify shared skills" },
-          { status: 403 }
+          { error: "Agent not found" },
+          { status: 404 }
         );
       }
     }
@@ -76,10 +76,10 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     if (managerName) {
       const { getAgent } = await import("@/lib/store");
       const agent = getAgent(managerName);
-      if (!agent || agent.role !== "manager") {
+      if (!agent) {
         return NextResponse.json(
-          { error: "Only manager agents can delete shared skills" },
-          { status: 403 }
+          { error: "Agent not found" },
+          { status: 404 }
         );
       }
     }

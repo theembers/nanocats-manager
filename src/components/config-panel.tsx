@@ -18,14 +18,12 @@ export function ConfigPanel({ activeAgents, onRemoveAgent }: ConfigPanelProps) {
   const router = useRouter();
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
   const [configData, setConfigData] = useState<Record<string, AgentConfig>>({});
-  const [agentRoles, setAgentRoles] = useState<Record<string, "manager" | "member">>({});
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ agent: string; type: "success" | "error"; message: string } | null>(null);
 
   const selectedAgentData = selectedAgent ? activeAgents.find(a => a.name === selectedAgent) : null;
-  const isManager = selectedAgentData?.role === "manager" || agentRoles[selectedAgent || ""] === "manager";
 
   useEffect(() => {
     if (activeAgents.length > 0 && !selectedAgent) {
@@ -67,30 +65,6 @@ export function ConfigPanel({ activeAgents, onRemoveAgent }: ConfigPanelProps) {
     };
 
     fetchConfigs();
-  }, [activeAgents]);
-
-  useEffect(() => {
-    const fetchRoles = async () => {
-      if (activeAgents.length === 0) return;
-
-      const roles: Record<string, "manager" | "member"> = {};
-      await Promise.all(
-        activeAgents.map(async (agent) => {
-          try {
-            const res = await fetch(`/api/agents/${agent.name}`);
-            if (res.ok) {
-              const data = await res.json();
-              if (data.role) {
-                roles[agent.name] = data.role;
-              }
-            }
-          } catch {}
-        })
-      );
-      setAgentRoles(roles);
-    };
-
-    fetchRoles();
   }, [activeAgents]);
 
   const handleSave = async () => {

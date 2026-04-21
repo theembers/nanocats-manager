@@ -87,7 +87,7 @@ export default function DashboardPage() {
 
   return (
     <div className="h-screen flex overflow-hidden">
-      <div className="w-[280px] flex-shrink-0">
+      <div className="w-[320px] flex-shrink-0">
         <DashboardSidebar agents={agents} onStatusChange={fetchAgents} />
       </div>
 

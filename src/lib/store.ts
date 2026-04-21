@@ -459,10 +459,6 @@ export function ensureSharedConfig(): void {
  * 为成员 agent 设置符号链接到共享配置
  */
 export function setupMemberSymlinks(agent: AgentInstance): void {
-  if (agent.role !== "member") {
-    return;
-  }
-
   ensureSharedConfig();
 
   const workspaceSkillsDir = path.join(agent.workspacePath, "skills");
@@ -480,14 +476,9 @@ export function setupMemberSymlinks(agent: AgentInstance): void {
 }
 
 /**
- * 将共享配置应用到指定 agent（支持 manager 和 member）
+ * 将共享配置应用到指定 agent
  */
 export function applySharedConfigToAgent(agent: AgentInstance): void {
-  if (agent.role !== "manager" && agent.role !== "member") {
-    console.log(`[SharedConfig] Agent ${agent.name} does not have shared config role, skipping`);
-    return;
-  }
-
   ensureSharedConfig();
 
   const workspaceSkillsDir = path.join(agent.workspacePath, "skills");
@@ -685,76 +676,7 @@ export function setupManagerSkill(agent: AgentInstance): void {
   }
 }
 
-/**
- * 更新 agent 的角色
- * 角色变更时自动处理符号链接
- */
-export function updateAgentRole(
-  agentName: string,
-  role: "manager" | "member"
-): AgentInstance | undefined {
-  const agent = getAgent(agentName);
-  if (!agent) {
-    return undefined;
-  }
 
-  const oldRole = agent.role;
-
-  // 如果角色没有变化，直接返回
-  if (oldRole === role) {
-    return agent;
-  }
-
-  // 清理旧角色的配置
-  if (oldRole === "member") {
-    cleanupMemberSymlinks(agent);
-  }
-
-  // 应用新角色
-  if (role === "manager") {
-    setupManagerSkill(agent);
-  } else if (role === "member") {
-    ensureSharedConfig();
-    setupMemberSymlinks(agent);
-  }
-
-  return updateAgent(agentName, { role });
-}
-
-/**
- * 获取所有成员 agent
- */
-export function getMemberAgents(): AgentInstance[] {
-  return getAgents().filter((agent) => agent.role === "member");
-}
-
-/**
- * 获取 Manager agent
- */
-export function getManagerAgent(): AgentInstance | undefined {
-  return getAgents().find((agent) => agent.role === "manager");
-}
-
-/**
- * 获取所有需要应用共享配置的 agents（manager + member）
- */
-export function getSharedConfigAgents(): AgentInstance[] {
-  return getAgents().filter((agent) => agent.role === "manager" || agent.role === "member");
-}
-
-/**
- * 获取所有成员 agent 的名称列表
- */
-export function getMemberAgentNames(): string[] {
-  return getMemberAgents().map((agent) => agent.name);
-}
-
-/**
- * 获取所有需要应用共享配置的 agents 名称列表（manager + member）
- */
-export function getSharedConfigAgentNames(): string[] {
-  return getSharedConfigAgents().map((agent) => agent.name);
-}
 
 // ==================== 备份功能 ====================
 

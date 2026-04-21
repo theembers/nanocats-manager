@@ -14,7 +14,6 @@ export function AgentForm() {
     model: "MiniMax-M2.7",
     provider: "minimax",
     apiKey: "",
-    role: "" as "manager" | "member" | "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -22,7 +21,6 @@ export function AgentForm() {
     setFormData((prev) => ({
       ...prev,
       [name]: name === "port" ? parseInt(value) || 0 : value,
-      [name]: name === "role" ? (value as "manager" | "member" | "") : value,
     }));
   };
 
@@ -49,7 +47,6 @@ export function AgentForm() {
           model: formData.model || undefined,
           provider: formData.provider || undefined,
           apiKey: formData.apiKey || undefined,
-          role: formData.role || undefined,
         }),
       });
 
@@ -88,26 +85,6 @@ export function AgentForm() {
           required
           className="w-full px-4 py-2.5 rounded-lg bg-zinc-800 border border-white/10 text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 transition-all"
         />
-      </div>
-
-      <div className="space-y-2">
-        <label htmlFor="role" className="block text-sm font-medium text-zinc-300">
-          Role
-        </label>
-        <select
-          id="role"
-          name="role"
-          value={formData.role}
-          onChange={handleChange}
-          className="w-full px-4 py-2.5 rounded-lg bg-zinc-800 border border-white/10 text-white focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 transition-all"
-        >
-          <option value="">No specific role</option>
-          <option value="manager">Manager (can manage shared config)</option>
-          <option value="member">Member (uses shared config)</option>
-        </select>
-        <p className="text-sm text-zinc-500">
-          Assign a role to enable shared configuration management
-        </p>
       </div>
 
       <div className="space-y-2">
