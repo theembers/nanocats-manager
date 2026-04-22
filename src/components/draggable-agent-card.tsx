@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createAvatar } from '@dicebear/core';
-import { identicon } from '@dicebear/collection';
+import { botttsNeutral } from '@dicebear/collection';
 import { AgentInstance } from "@/lib/types";
 
 interface DraggableAgentCardProps {
@@ -43,7 +43,7 @@ export function DraggableAgentCard({ agent, onStatusChange }: DraggableAgentCard
 
   // Generate DiceBear avatar SVG
   const avatarSvg = (() => {
-    const avatar = createAvatar(identicon, {
+    const avatar = createAvatar(botttsNeutral, {
       seed: agent.name,
       size: 32,
     });
@@ -125,24 +125,24 @@ export function DraggableAgentCard({ agent, onStatusChange }: DraggableAgentCard
           <button
             onClick={handleConfirmStop}
             disabled={loading}
-            className="w-7 h-7 flex items-center justify-center rounded-md btn-destructive disabled:opacity-50"
+            className="icon-btn icon-btn-success"
           >
             {loading ? (
-              <LoaderIcon className="w-3.5 h-3.5 animate-spin" />
+              <LoaderIcon className="w-4 h-4 animate-spin" />
             ) : (
-              <StopIcon className="w-3.5 h-3.5" />
+              <PowerIcon className="w-4 h-4" />
             )}
           </button>
         ) : (
           <button
             onClick={handleStart}
             disabled={loading}
-            className="w-7 h-7 flex items-center justify-center rounded-md btn-success disabled:opacity-50"
+            className="icon-btn icon-btn-gray"
           >
             {loading ? (
-              <LoaderIcon className="w-3.5 h-3.5 animate-spin" />
+              <LoaderIcon className="w-4 h-4 animate-spin" />
             ) : (
-              <PlayIcon className="w-3.5 h-3.5" />
+              <PowerIcon className="w-4 h-4" />
             )}
           </button>
         )}
@@ -161,18 +161,21 @@ export function DraggableAgentCard({ agent, onStatusChange }: DraggableAgentCard
 }
 
 // Icon components
-function PlayIcon({ className }: { className?: string }) {
+function PowerIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="5 3 19 12 5 21 5 3" />
+      <path d="M12 2v10" />
+      <path d="M18.4 6.6a9 9 0 1 1-12.8 0" />
     </svg>
   );
 }
 
-function StopIcon({ className }: { className?: string }) {
+function PowerOffIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="6" y="6" width="12" height="12" rx="2" />
+      <path d="M12 2v10" />
+      <path d="M18.4 6.6a9 9 0 1 1-12.8 0" />
+      <line x1="2" y1="2" x2="22" y2="22" />
     </svg>
   );
 }
