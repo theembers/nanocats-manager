@@ -3,8 +3,6 @@ import { Space_Grotesk, DM_Sans } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 
-import { NavLink } from "./nav-link";
-
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   variable: "--font-heading",

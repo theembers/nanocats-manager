@@ -147,7 +147,7 @@ export function ConfigPanel({ activeAgents, onRemoveAgent }: ConfigPanelProps) {
               </button>
             </button>
           ))}
-          {isManager && selectedAgent && (
+          {selectedAgent && (
             <button
               onClick={() => router.push(`/agents/${selectedAgent}/manager`)}
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-orange-500/20 text-orange-400 border border-orange-500/30 hover:bg-orange-500/30 transition-all whitespace-nowrap"
