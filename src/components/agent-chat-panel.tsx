@@ -5,7 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import { createAvatar } from '@dicebear/core';
-import { identicon } from '@dicebear/collection';
+import { botttsNeutral } from '@dicebear/collection';
 import { AgentInstance } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -71,13 +71,13 @@ export function AgentChatPanel({ agent, onClose }: AgentChatPanelProps) {
 
   // Initialize session ID only on client to avoid hydration mismatch
   useEffect(() => {
-    sessionIdRef.current = `ws_${agent.name}_${Date.now()}`;
+    sessionIdRef.current = `web_${agent.name}`;
   }, [agent.name]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Generate DiceBear avatar SVG
   const avatarSvg = (() => {
-    const avatar = createAvatar(identicon, {
+    const avatar = createAvatar(botttsNeutral, {
       seed: agent.name,
       size: 32,
     });
@@ -363,6 +363,10 @@ export function AgentChatPanel({ agent, onClose }: AgentChatPanelProps) {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
+      // 当输入法处于组合状态时，不触发发送（防止中文输入法按回车时提前发送）
+      if (e.nativeEvent.isComposing || e.keyCode === 229) {
+        return;
+      }
       e.preventDefault();
       handleSendMessage();
     }
