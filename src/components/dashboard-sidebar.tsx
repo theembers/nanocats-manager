@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AgentInstance } from "@/lib/types";
 import { DraggableAgentCard } from "./draggable-agent-card";
@@ -10,6 +11,49 @@ interface DashboardSidebarProps {
 }
 
 export function DashboardSidebar({ agents, onStatusChange }: DashboardSidebarProps) {
+  const [version, setVersion] = useState<string>("");
+  const [updating, setUpdating] = useState(false);
+  const [updateMsg, setUpdateMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  useEffect(() => {
+    fetchVersion();
+  }, []);
+
+  const fetchVersion = async () => {
+    try {
+      const res = await fetch("/api/nanobot/version");
+      if (res.ok) {
+        const data = await res.json();
+        setVersion(data.version);
+      }
+    } catch (error) {
+      console.error("Failed to fetch nanobot version:", error);
+    }
+  };
+
+  const handleUpdate = async () => {
+    if (updating) return;
+
+    setUpdating(true);
+    setUpdateMsg(null);
+
+    try {
+      const res = await fetch("/api/nanobot/update", { method: "POST" });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setUpdateMsg({ type: "success", text: "Nanobot updated successfully!" });
+        fetchVersion();
+      } else {
+        setUpdateMsg({ type: "error", text: data.error || "Update failed" });
+      }
+    } catch (error) {
+      setUpdateMsg({ type: "error", text: "Update request failed" });
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   return (
     <div className="h-full flex flex-col bg-zinc-950 border-r border-white/5">
       <div className="h-14 px-4 flex items-center border-b border-white/5">
@@ -22,7 +66,7 @@ export function DashboardSidebar({ agents, onStatusChange }: DashboardSidebarPro
 
       <div className="px-3 py-2 border-b border-white/5">
         <Link href="/agents/new">
-          <button className="w-full px-3 py-2 rounded-lg bg-orange-500/20 border border-orange-500/50 text-orange-300 hover:bg-orange-500/30 hover:border-orange-400 font-medium text-sm flex items-center justify-center gap-2 transition-all">
+          <button className="sidebar-btn sidebar-btn-orange">
             <PlusIcon className="w-4 h-4" />
             New Agent
           </button>
@@ -31,7 +75,7 @@ export function DashboardSidebar({ agents, onStatusChange }: DashboardSidebarPro
 
       <div className="px-3 py-2 border-b border-white/5">
         <Link href="/manager">
-          <button className="w-full px-3 py-2 rounded-lg bg-blue-500/20 border border-blue-500/50 text-blue-300 hover:bg-blue-500/30 hover:border-blue-400 font-medium text-sm flex items-center justify-center gap-2 transition-all">
+          <button className="sidebar-btn sidebar-btn-blue">
             <ShieldIcon className="w-4 h-4" />
             Manager Console
           </button>
@@ -57,7 +101,38 @@ export function DashboardSidebar({ agents, onStatusChange }: DashboardSidebarPro
         )}
       </div>
 
-      <div className="p-3 border-t border-white/5">
+      <div className="p-3 border-t border-white/5 space-y-2">
+        {version && (
+          <div className="text-[10px] text-zinc-500 text-center">
+            nanobot v{version}
+          </div>
+        )}
+        <button
+          onClick={handleUpdate}
+          disabled={updating}
+          className="sidebar-btn sidebar-btn-green"
+        >
+          {updating ? (
+            <>
+              <LoadingIcon className="w-4 h-4 animate-spin" />
+              Updating...
+            </>
+          ) : (
+            <>
+              <RefreshIcon className="w-4 h-4" />
+              Update Nanobot
+            </>
+          )}
+        </button>
+        {updateMsg && (
+          <div
+            className={`text-[10px] text-center ${
+              updateMsg.type === "success" ? "text-green-400" : "text-red-400"
+            }`}
+          >
+            {updateMsg.text}
+          </div>
+        )}
         <p className="text-[10px] text-zinc-600 text-center">
           Drag agents to workspace
         </p>
@@ -79,6 +154,25 @@ function PlusIcon({ className }: { className?: string }) {
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M5 12h14"/>
       <path d="M12 5v14"/>
+    </svg>
+  );
+}
+
+function RefreshIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+      <path d="M3 3v5h5"/>
+      <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+      <path d="M16 16h5v5"/>
+    </svg>
+  );
+}
+
+function LoadingIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
     </svg>
   );
 }
