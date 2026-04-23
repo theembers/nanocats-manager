@@ -413,13 +413,13 @@ export function AgentChatPanel({ agent, onClose }: AgentChatPanelProps) {
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="p-2 border-t border-white/5">
+          <div className="p-2 border-t border-white/10">
             {attachments.length > 0 && (
               <div className="flex gap-2 overflow-x-auto mb-2 pb-1">
                 {attachments.map((attachment) => (
                   <div
                     key={attachment.id}
-                    className="relative flex-shrink-0 bg-zinc-800 border border-zinc-700 overflow-hidden"
+                    className="relative flex-shrink-0 bg-[#464740] border border-white/10 overflow-hidden"
                   >
                     {attachment.type.startsWith('image/') ? (
                       <div className="w-16 h-16">
@@ -440,7 +440,7 @@ export function AgentChatPanel({ agent, onClose }: AgentChatPanelProps) {
                     )}
                     <button
                       onClick={() => removeAttachment(attachment.id)}
-                      className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs transition-colors"
+                      className="absolute -top-1 -right-1 w-5 h-5 bg-primary hover:bg-primary/80 text-white rounded-full flex items-center justify-center text-xs transition-colors"
                     >
                       ×
                     </button>
@@ -465,7 +465,7 @@ export function AgentChatPanel({ agent, onClose }: AgentChatPanelProps) {
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={!isConnected || attachments.length >= 5}
-                className="w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-orange-400 disabled:text-zinc-600 disabled:hover:text-zinc-600 transition-colors"
+                className="w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-primary disabled:text-zinc-500 disabled:hover:text-zinc-500 transition-colors"
                 title="Attach file"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -481,7 +481,7 @@ export function AgentChatPanel({ agent, onClose }: AgentChatPanelProps) {
                   placeholder={isConnected ? "Type a message..." : "Connecting..."}
                   disabled={!isConnected}
                   rows={1}
-                  className="w-full bg-zinc-800 border border-zinc-700 px-3 text-xs placeholder-zinc-500 focus:outline-none resize-none"
+                  className="w-full bg-[#464740] border border-white/10 px-3 text-xs placeholder-zinc-500 focus:outline-none resize-none"
                   style={{
                     height: "32px",
                     lineHeight: "32px",
@@ -502,7 +502,7 @@ export function AgentChatPanel({ agent, onClose }: AgentChatPanelProps) {
                   wsRef.current.send(JSON.stringify({ text: "/new" }));
                 }}
                 disabled={!isConnected || pendingFiles > 0}
-                className="px-3 h-8 bg-orange-500/20 hover:bg-orange-500/30 disabled:bg-zinc-700/20 disabled:opacity-50 text-orange-400 disabled:text-zinc-500 font-medium transition-colors border border-orange-500/30 hover:border-orange-500/50 flex items-center justify-center text-sm"
+                className="px-3 h-8 bg-primary/20 hover:bg-primary/30 disabled:bg-[#464740]/20 disabled:opacity-50 text-primary disabled:text-zinc-500 font-medium transition-colors border border-primary/30 hover:border-primary/50 flex items-center justify-center text-sm"
                 title="New conversation (/new)"
               >
                 /new
@@ -513,15 +513,15 @@ export function AgentChatPanel({ agent, onClose }: AgentChatPanelProps) {
                 className={cn(
                   "px-3 min-w-[64px] h-8 font-medium transition-all duration-200 flex items-center justify-center text-sm",
                   isAgentTyping
-                    ? "bg-green-500/20 border border-green-500/30 text-green-400 cursor-wait"
-                    : "bg-green-500/20 hover:bg-green-500/30 border border-green-500/30 text-green-400 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:hover:scale-100"
+                    ? "bg-primary/20 border border-primary/30 text-success cursor-wait"
+                    : "bg-[#EDD7AD]/20 hover:bg-[#EDD7AD]/30 border border-success/30 text-success hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:hover:scale-100"
                 )}
               >
                 {isAgentTyping ? (
                   <span className="flex gap-1">
-                    <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></span>
-                    <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></span>
-                    <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></span>
+                    <span className="w-1.5 h-1.5 bg-[#EDD7AD] rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></span>
+                    <span className="w-1.5 h-1.5 bg-[#EDD7AD] rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></span>
+                    <span className="w-1.5 h-1.5 bg-[#EDD7AD] rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></span>
                   </span>
                 ) : (
                   <span>Send</span>
@@ -549,23 +549,23 @@ function PanelHeader({ agent, onClose, avatarSvg, showConfig, onToggleConfig }: 
   onToggleConfig: () => void;
 }) {
   const statusDotColor = {
-    running: "bg-green-500",
+    running: "bg-[#EDD7AD]",
     stopped: "bg-zinc-500",
-    error: "bg-red-500",
+    error: "bg-primary",
   }[agent.status] || "bg-zinc-500";
 
   return (
-    <div className="flex items-center gap-2.5 p-2 border-b border-white/5">
+    <div className="flex items-center gap-2.5 p-2 border-b border-white/10">
       <div className="relative">
         <div
-          className="w-8 h-8 rounded-full overflow-hidden bg-zinc-700 cursor-pointer"
+          className="w-8 h-8 rounded-full overflow-hidden bg-[#464740] cursor-pointer"
           dangerouslySetInnerHTML={{ __html: avatarSvg }}
         />
         <button
           onClick={onToggleConfig}
           className={cn(
             "absolute inset-0 rounded-full flex items-center justify-center transition-all duration-200",
-            showConfig ? "bg-orange-500/70" : "bg-transparent hover:bg-black/50"
+            showConfig ? "bg-primary/70" : "bg-transparent hover:bg-black/50"
           )}
           title="Agent Config"
         >
@@ -588,8 +588,8 @@ function MessageBubble({ msg, onImagePreview: _onImagePreview }: { msg: Message;
   if (msg.type === "tool" && msg.toolResult) {
     return (
       <div className="flex justify-start gap-2">
-        <div className="w-7 h-7 rounded-full bg-green-500/20 border border-green-500/30 flex items-center justify-center flex-shrink-0">
-          <ToolIcon className="w-3.5 h-3.5 text-green-400" />
+        <div className="w-8 h-8 rounded-full bg-[#464740] border border-white/10 flex items-center justify-center flex-shrink-0">
+          <ToolIcon className="w-4 h-4 text-[#A7AB9C]" />
         </div>
         <div className="max-w-[80%] flex flex-col items-start">
           <ToolResultBlock toolResult={msg.toolResult} />
@@ -602,17 +602,17 @@ function MessageBubble({ msg, onImagePreview: _onImagePreview }: { msg: Message;
   return (
     <div className={cn("flex", msg.type === "user" ? "justify-end" : "justify-start", "gap-2")}>
       {msg.type === "bot" && hasBotContent && (
-        <div className="w-7 h-7 rounded-full bg-orange-500/20 border border-orange-500/30 flex items-center justify-center flex-shrink-0">
-          <BotIcon className="w-3.5 h-3.5 text-orange-400" />
+<div className="w-8 h-8 rounded-full bg-[#464740] border border-white/10 flex items-center justify-center flex-shrink-0">
+                <BotIcon className="w-4 h-4 text-primary" />
         </div>
       )}
       <div className={cn("max-w-[80%] flex flex-col", msg.type === "user" ? "items-end" : "items-start")}>
         {hasBotContent && (
-          <div className="px-3 py-2 rounded-2xl bg-zinc-800 text-zinc-200 rounded-bl-md border border-zinc-700/50 space-y-2">
+          <div className="px-3 py-2 rounded-2xl bg-[#464740] text-zinc-200 rounded-bl-md border border-white/10/50 space-y-2">
             {msg.thinkContent && <ThinkBlock content={msg.thinkContent} isStreaming={msg.isStreaming} />}
             {msg.toolExecuting && msg.toolExecuting.length > 0 && <ToolExecutingBlock tools={msg.toolExecuting} isExecuting={msg.isStreaming && !msg.content} />}
             {msg.content && (
-              <div className={msg.isStreaming ? "border-l-4 border-l-orange-400 pl-3" : ""}>
+              <div className={msg.isStreaming ? "border-l-4 border-l-primary pl-3" : ""}>
                 <MemoizedMarkdown content={msg.content} />
                 {msg.isStreaming && <StreamingIndicator />}
               </div>
@@ -620,15 +620,15 @@ function MessageBubble({ msg, onImagePreview: _onImagePreview }: { msg: Message;
           </div>
         )}
         {msg.type === "user" && (
-          <div className="px-3 py-2 rounded-2xl bg-orange-500/20 text-white rounded-br-md text-sm">
+          <div className="px-3 py-2 rounded-2xl bg-primary/20 text-white rounded-br-md text-sm">
             <CollapsibleUserContent content={msg.content} />
           </div>
         )}
         <MessageMeta timestamp={msg.timestamp} alignRight={msg.type === "user"} />
       </div>
       {msg.type === "user" && (
-        <div className="w-7 h-7 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center flex-shrink-0">
-          <UserIcon className="w-3.5 h-3.5 text-blue-400" />
+        <div className="w-8 h-8 rounded-full bg-[#464740] border border-white/10 flex items-center justify-center flex-shrink-0">
+          <UserIcon className="w-4 h-4 text-[#A7AB9C]" />
         </div>
       )}
     </div>
@@ -641,14 +641,14 @@ function ThinkBlock({ content, isStreaming }: { content: string; isStreaming?: b
   useEffect(() => { if (isStreaming) setIsExpanded(true); }, [isStreaming]);
 
   return (
-    <div className="mb-2 rounded-lg border border-purple-500/30 bg-purple-500/10 overflow-hidden">
-      <button onClick={() => setIsExpanded(!isExpanded)} className="w-full flex items-center gap-2 px-3 py-1.5 text-purple-400 text-xs font-medium hover:bg-purple-500/20">
+    <div className="mb-2 rounded-lg border border-primary/30 bg-primary/10 overflow-hidden">
+      <button onClick={() => setIsExpanded(!isExpanded)} className="w-full flex items-center gap-2 px-3 py-1.5 text-primary text-xs font-medium hover:bg-primary/20">
         <ThinkIcon className="w-3.5 h-3.5" />
         <span>Thinking</span>
         {isStreaming && <StreamingDots />}
         <ChevronDownIcon className={cn("w-3.5 h-3.5 ml-auto transition-transform", isExpanded && "rotate-180")} />
       </button>
-      {isExpanded && <div className="px-3 py-1.5 border-t border-purple-500/30 text-xs text-purple-300/80 whitespace-pre-wrap">{content}</div>}
+      {isExpanded && <div className="px-3 py-1.5 border-t border-primary/30 text-primary/80 whitespace-pre-wrap">{content}</div>}
     </div>
   );
 }
@@ -657,13 +657,13 @@ function ToolExecutingBlock({ tools, isExecuting }: { tools: ToolExecuting[]; is
   return (
     <div className="mb-2 space-y-1.5">
       {tools.map((tool) => (
-        <div key={tool.id} className="rounded-lg border border-blue-500/30 bg-blue-500/10 overflow-hidden">
-          <div className="flex items-center gap-2 px-3 py-1.5 text-blue-400 text-xs font-medium">
+        <div key={tool.id} className="rounded-lg border border-primary/30 bg-primary/10 overflow-hidden">
+          <div className="flex items-center gap-2 px-3 py-1.5 text-accent text-xs font-medium">
             <div className="relative">
               <ToolIcon className="w-3.5 h-3.5" />
-              {isExecuting && <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5"><span className="absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75 animate-ping" /><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-500" /></span>}
+              {isExecuting && <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5"><span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-75 animate-ping" /><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary" /></span>}
             </div>
-            <span className="font-mono text-blue-300">{tool.hint}</span>
+            <span className="font-mono text-accent">{tool.hint}</span>
           </div>
         </div>
       ))}
@@ -683,20 +683,13 @@ function ToolResultBlock({ toolResult }: { toolResult: ToolResult }) {
   const contentStr = getDisplayText(toolResult.content);
 
   return (
-    <div className="rounded-lg border border-green-500/30 bg-green-500/10 overflow-hidden">
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center gap-2 px-3 py-1.5 text-green-400 text-xs font-medium hover:bg-green-500/20"
-      >
-        <ToolIcon className="w-3.5 h-3.5" />
-        <span className="font-mono">{toolResult.name}</span>
-        <ChevronDownIcon className={cn("w-3.5 h-3.5 ml-auto transition-transform", isExpanded && "rotate-180")} />
-      </button>
-      {isExpanded && (
-        <div className="px-3 py-1.5 border-t border-green-500/30">
-          <pre className="text-xs text-green-300/80 whitespace-pre-wrap break-all">{contentStr}</pre>
-        </div>
-      )}
+    <div className="rounded-lg border border-success/30 bg-[#EDD7AD]/10 overflow-hidden">
+      <div className="w-full flex items-center gap-2 px-3 py-1.5 text-success text-xs font-medium hover:bg-[#EDD7AD]/20">
+        <ToolIcon className="w-3.5 h-3.5 text-success" />
+      </div>
+      <div className="px-3 py-1.5 border-t border-success/30">
+        <pre className="text-xs text-success/80 whitespace-pre-wrap break-all">{contentStr}</pre>
+      </div>
     </div>
   );
 }
@@ -714,7 +707,7 @@ function CollapsibleUserContent({ content }: { content: string }) {
   return (
     <div>
       <span className="whitespace-pre-wrap">{displayContent}</span>
-      {isLong && <button onClick={() => setIsExpanded(!isExpanded)} className="text-xs text-orange-400 hover:text-orange-300 mt-1 block">{isExpanded ? "Show less" : "Show more"}</button>}
+      {isLong && <button onClick={() => setIsExpanded(!isExpanded)} className="text-xs text-primary hover:text-primary-hover mt-1 block">{isExpanded ? "Show less" : "Show more"}</button>}
     </div>
   );
 }
@@ -735,20 +728,20 @@ function MemoizedMarkdown({ content }: { content: string }) {
             const match = /language-(\w+)/.exec(className || '');
             const isInline = !match;
             return isInline ? (
-              <code className="bg-zinc-700/50 px-1.5 py-0.5 rounded text-orange-300 text-xs font-mono" {...props}>{children}</code>
+              <code className="bg-[#464740]/50 px-1.5 py-0.5 rounded text-primary-light text-xs font-mono" {...props}>{children}</code>
             ) : (
-              <code className={cn(className, "block bg-zinc-900 p-3 rounded-lg overflow-x-auto text-xs font-mono border border-zinc-700/50 mb-2")} {...props}>{children}</code>
+              <code className={cn(className, "block bg-[#464740] p-3 rounded-lg overflow-x-auto text-xs font-mono border border-white/10 mb-2")} {...props}>{children}</code>
             );
           },
           pre: ({ children }) => <>{children}</>,
-          a: ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-orange-400 hover:text-orange-300 underline">{children}</a>,
+          a: ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary-hover underline">{children}</a>,
           strong: ({ children }) => <strong className="font-semibold text-white">{children}</strong>,
           em: ({ children }) => <em className="italic">{children}</em>,
           h1: ({ children }) => <h1 className="text-xl font-bold text-white mb-2">{children}</h1>,
           h2: ({ children }) => <h2 className="text-lg font-bold text-white mb-2">{children}</h2>,
           h3: ({ children }) => <h3 className="text-base font-semibold text-white mb-1">{children}</h3>,
-          blockquote: ({ children }) => <blockquote className="border-l-4 border-zinc-600 pl-4 italic text-zinc-400 mb-2">{children}</blockquote>,
-          hr: () => <hr className="border-zinc-700 my-4" />,
+          blockquote: ({ children }) => <blockquote className="border-l-4 border-white/10 pl-4 italic text-zinc-400 mb-2">{children}</blockquote>,
+          hr: () => <hr className="border-white/10 my-4" />,
         }}
       >{content}</ReactMarkdown>
     </div>
@@ -768,9 +761,9 @@ function StreamingIndicator() {
 function StreamingDots() {
   return (
     <span className="flex gap-1 ml-1">
-      <span className="w-1 h-1 bg-purple-400 rounded-full animate-bounce" />
-      <span className="w-1 h-1 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-      <span className="w-1 h-1 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+      <span className="w-1 h-1 bg-primary rounded-full animate-bounce" />
+      <span className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+      <span className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
     </span>
   );
 }
@@ -851,7 +844,7 @@ function AgentConfigDetail({ agent }: { agent: AgentInstance }) {
         <div className="flex items-center gap-2 mb-3 flex-shrink-0">
           <button
             onClick={() => setSelectedSection("main")}
-            className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white transition-colors"
+            className="p-1.5 rounded-lg bg-[#464740] hover:bg-[#52524d] text-zinc-400 hover:text-white transition-colors"
           >
             <ChevronLeftIcon className="w-4 h-4" />
           </button>
@@ -883,30 +876,30 @@ function AgentConfigDetail({ agent }: { agent: AgentInstance }) {
   return (
     <div className="h-full flex flex-col">
       <div className="grid grid-cols-3 gap-2 mb-3">
-        <div className="p-3 rounded-lg bg-zinc-800/50 border border-zinc-700/30">
+        <div className="p-3 rounded-lg bg-[#464740] border border-white/10/30">
           <div className="flex items-center gap-2 mb-1">
             <GlobeIcon className="w-4 h-4 text-zinc-500" />
             <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Port</span>
           </div>
           <p className="text-lg font-bold text-white font-mono">{agent.port}</p>
         </div>
-        <div className="p-3 rounded-lg bg-zinc-800/50 border border-zinc-700/30">
+        <div className="p-3 rounded-lg bg-[#464740] border border-white/10/30">
           <div className="flex items-center gap-2 mb-1">
             <HashIcon className="w-4 h-4 text-zinc-500" />
             <span className="text-zinc-500 uppercase tracking-wider text-[10px]">PID</span>
           </div>
           <p className="text-lg font-bold text-white font-mono">{agent.pid || "N/A"}</p>
         </div>
-        <div className="p-3 rounded-lg bg-zinc-800/50 border border-zinc-700/30">
+        <div className="p-3 rounded-lg bg-[#464740] border border-white/10/30">
           <div className="flex items-center gap-2 mb-1">
             <CalendarIcon className="w-4 h-4 text-zinc-500" />
             <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Days</span>
           </div>
-          <p className="text-lg font-bold text-orange-400 font-mono">{daysRunning}</p>
+          <p className="text-lg font-bold text-primary font-mono">{daysRunning}</p>
         </div>
       </div>
 
-      <div className="p-3 rounded-lg bg-zinc-800/50 border border-zinc-700/30 mb-3">
+      <div className="p-3 rounded-lg bg-[#464740] border border-white/10/30 mb-3">
         <div className="flex items-center gap-2 mb-2">
           <FileIcon className="w-4 h-4 text-zinc-500" />
           <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Config Path</span>
@@ -914,7 +907,7 @@ function AgentConfigDetail({ agent }: { agent: AgentInstance }) {
         <p className="text-xs font-mono text-zinc-300 break-all">{agent.configPath}</p>
       </div>
 
-      <div className="p-3 rounded-lg bg-zinc-800/50 border border-zinc-700/30 mb-3">
+      <div className="p-3 rounded-lg bg-[#464740] border border-white/10/30 mb-3">
         <div className="flex items-center gap-2 mb-2">
           <FolderIcon className="w-4 h-4 text-zinc-500" />
           <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Workspace</span>
@@ -925,49 +918,49 @@ function AgentConfigDetail({ agent }: { agent: AgentInstance }) {
       <div className="grid grid-cols-3 gap-2 mt-auto">
         <button
           onClick={() => setSelectedSection("config")}
-          className="p-2 rounded-lg bg-zinc-800/50 border border-zinc-700/30 hover:bg-zinc-700/50 transition-colors text-center"
+          className="p-2 rounded-lg bg-[#464740] border border-white/10/30 hover:bg-[#52524d]/50 transition-colors text-center"
         >
           <SettingsIcon className="w-4 h-4 text-zinc-400 mx-auto mb-1" />
           <span className="text-[10px] text-zinc-400">Config</span>
         </button>
         <button
           onClick={() => setSelectedSection("workspace")}
-          className="p-2 rounded-lg bg-zinc-800/50 border border-zinc-700/30 hover:bg-zinc-700/50 transition-colors text-center"
+          className="p-2 rounded-lg bg-[#464740] border border-white/10/30 hover:bg-[#52524d]/50 transition-colors text-center"
         >
           <FolderIcon className="w-4 h-4 text-zinc-400 mx-auto mb-1" />
           <span className="text-[10px] text-zinc-400">Workspace</span>
         </button>
         <button
           onClick={() => setSelectedSection("skills")}
-          className="p-2 rounded-lg bg-zinc-800/50 border border-zinc-700/30 hover:bg-zinc-700/50 transition-colors text-center"
+          className="p-2 rounded-lg bg-[#464740] border border-white/10/30 hover:bg-[#52524d]/50 transition-colors text-center"
         >
           <ZapIcon className="w-4 h-4 text-zinc-400 mx-auto mb-1" />
           <span className="text-[10px] text-zinc-400">Skills</span>
         </button>
         <button
           onClick={() => setSelectedSection("cron")}
-          className="p-2 rounded-lg bg-zinc-800/50 border border-zinc-700/30 hover:bg-zinc-700/50 transition-colors text-center"
+          className="p-2 rounded-lg bg-[#464740] border border-white/10/30 hover:bg-[#52524d]/50 transition-colors text-center"
         >
           <ClockIcon className="w-4 h-4 text-zinc-400 mx-auto mb-1" />
           <span className="text-[10px] text-zinc-400">Cron</span>
         </button>
         <button
           onClick={() => setSelectedSection("memory")}
-          className="p-2 rounded-lg bg-zinc-800/50 border border-zinc-700/30 hover:bg-zinc-700/50 transition-colors text-center"
+          className="p-2 rounded-lg bg-[#464740] border border-white/10/30 hover:bg-[#52524d]/50 transition-colors text-center"
         >
           <BrainIcon className="w-4 h-4 text-zinc-400 mx-auto mb-1" />
           <span className="text-[10px] text-zinc-400">Memory</span>
         </button>
         <button
           onClick={() => setSelectedSection("env")}
-          className="p-2 rounded-lg bg-zinc-800/50 border border-zinc-700/30 hover:bg-zinc-700/50 transition-colors text-center"
+          className="p-2 rounded-lg bg-[#464740] border border-white/10/30 hover:bg-[#52524d]/50 transition-colors text-center"
         >
           <TerminalIcon className="w-4 h-4 text-zinc-400 mx-auto mb-1" />
           <span className="text-[10px] text-zinc-400">Env</span>
         </button>
         <button
           onClick={() => setSelectedSection("logs")}
-          className="p-2 rounded-lg bg-zinc-800/50 border border-zinc-700/30 hover:bg-zinc-700/50 transition-colors text-center col-span-3"
+          className="p-2 rounded-lg bg-[#464740] border border-white/10/30 hover:bg-[#52524d]/50 transition-colors text-center col-span-3"
         >
           <FileTextIcon className="w-4 h-4 text-zinc-400 mx-auto mb-1" />
           <span className="text-[10px] text-zinc-400">View Logs</span>
@@ -1056,12 +1049,12 @@ function InlineConfigEditor({ agent }: { agent: AgentInstance }) {
           {saving ? "Saving..." : "Save"}
         </button>
       </div>
-      {error && <div className="mb-2 p-2 rounded bg-red-500/10 text-red-400 text-xs border border-red-500/20">{error}</div>}
-      {feedback && <div className="mb-2 p-2 rounded bg-green-500/10 text-green-400 text-xs border border-green-500/20">{feedback.message}</div>}
+      {error && <div className="mb-2 p-2 rounded bg-primary/10 text-primary text-xs border border-destructive/20">{error}</div>}
+      {feedback && <div className="mb-2 p-2 rounded bg-[#EDD7AD]/10 text-success text-xs border border-success/20">{feedback.message}</div>}
       <textarea
         value={config}
         onChange={(e) => { setConfig(e.target.value); setError(null); }}
-        className="flex-1 w-full p-3 rounded-lg bg-zinc-900 border border-white/10 text-zinc-200 font-mono text-xs resize-none focus:outline-none focus:border-orange-500/50"
+        className="flex-1 w-full p-3 rounded-lg bg-[#464740] border border-white/10 text-zinc-200 font-mono text-xs resize-none focus:outline-none focus:border-primary/50"
       />
     </div>
   );
@@ -1131,7 +1124,7 @@ function InlineWorkspaceEditor({ agent }: { agent: AgentInstance }) {
             onClick={() => setActiveTab(file.id)}
             className={cn(
               "px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors",
-              activeTab === file.id ? "bg-orange-500/20 text-orange-400 border border-orange-500/30" : "bg-zinc-800 text-zinc-400 border border-transparent hover:text-zinc-200"
+              activeTab === file.id ? "bg-primary/20 text-primary border border-primary/30" : "bg-[#464740] text-zinc-400 border border-transparent hover:text-zinc-200"
             )}
           >
             {file.name}
@@ -1145,14 +1138,14 @@ function InlineWorkspaceEditor({ agent }: { agent: AgentInstance }) {
         </button>
       </div>
       {feedback && (
-        <div className={cn("mb-2 p-2 rounded text-xs", feedback.type === "success" ? "bg-green-500/10 text-green-400" : "bg-red-500/10 text-red-400")}>
+        <div className={cn("mb-2 p-2 rounded text-xs", feedback.type === "success" ? "bg-[#EDD7AD]/10 text-success" : "bg-primary/10 text-primary")}>
           {feedback.message}
         </div>
       )}
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        className="flex-1 w-full p-3 rounded-lg bg-zinc-900 border border-white/10 text-zinc-200 font-mono text-xs resize-none focus:outline-none focus:border-orange-500/50"
+        className="flex-1 w-full p-3 rounded-lg bg-[#464740] border border-white/10 text-zinc-200 font-mono text-xs resize-none focus:outline-none focus:border-primary/50"
         placeholder={`Edit ${currentFile.name}...`}
       />
     </div>
@@ -1224,7 +1217,7 @@ function InlineSkillsPanel({ agent }: { agent: AgentInstance }) {
     return (
       <div className="h-full flex flex-col">
         <div className="flex items-center justify-between mb-2 flex-shrink-0">
-          <button onClick={() => setSelectedSkill(null)} className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white">
+          <button onClick={() => setSelectedSkill(null)} className="p-1.5 rounded-lg bg-[#464740] hover:bg-[#52524d] text-zinc-400 hover:text-white">
             <ChevronLeftIcon className="w-4 h-4" />
           </button>
           <span className="text-xs text-zinc-400">Editing: {selectedSkill.name}</span>
@@ -1235,7 +1228,7 @@ function InlineSkillsPanel({ agent }: { agent: AgentInstance }) {
         <textarea
           value={skillContent}
           onChange={(e) => setSkillContent(e.target.value)}
-          className="flex-1 w-full p-3 rounded-lg bg-zinc-900 border border-white/10 text-zinc-200 font-mono text-xs resize-none focus:outline-none focus:border-orange-500/50"
+          className="flex-1 w-full p-3 rounded-lg bg-[#464740] border border-white/10 text-zinc-200 font-mono text-xs resize-none focus:outline-none focus:border-primary/50"
         />
       </div>
     );
@@ -1254,7 +1247,7 @@ function InlineSkillsPanel({ agent }: { agent: AgentInstance }) {
       {skills.map(skill => (
         <div
           key={skill.path}
-          className="p-3 rounded-lg bg-zinc-800/50 border border-zinc-700/30 hover:bg-zinc-800 transition-colors"
+          className="p-3 rounded-lg bg-[#464740] border border-white/10/30 hover:bg-[#464740] transition-colors"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -1263,7 +1256,7 @@ function InlineSkillsPanel({ agent }: { agent: AgentInstance }) {
             </div>
             <button
               onClick={() => handleSelectSkill(skill)}
-              className="px-3 py-1 rounded-lg bg-zinc-700 hover:bg-zinc-600 text-zinc-300 text-xs"
+              className="px-3 py-1 rounded-lg bg-[#52524d] hover:bg-[#464740] text-zinc-300 text-xs"
             >
               Edit
             </button>
@@ -1365,13 +1358,13 @@ function InlineCronPanel({ agent }: { agent: AgentInstance }) {
       <div className="flex gap-1 mb-3 flex-shrink-0">
         <button
           onClick={() => setActiveTab("config")}
-          className={cn("px-3 py-1.5 rounded-lg text-xs font-medium", activeTab === "config" ? "bg-orange-500/20 text-orange-400 border border-orange-500/30" : "bg-zinc-800 text-zinc-400")}
+          className={cn("px-3 py-1.5 rounded-lg text-xs font-medium", activeTab === "config" ? "bg-primary/20 text-primary border border-primary/30" : "bg-[#464740] text-zinc-400")}
         >
           Config
         </button>
         <button
           onClick={() => setActiveTab("records")}
-          className={cn("px-3 py-1.5 rounded-lg text-xs font-medium", activeTab === "records" ? "bg-orange-500/20 text-orange-400 border border-orange-500/30" : "bg-zinc-800 text-zinc-400")}
+          className={cn("px-3 py-1.5 rounded-lg text-xs font-medium", activeTab === "records" ? "bg-primary/20 text-primary border border-primary/30" : "bg-[#464740] text-zinc-400")}
         >
           Records
         </button>
@@ -1388,7 +1381,7 @@ function InlineCronPanel({ agent }: { agent: AgentInstance }) {
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="flex-1 w-full p-3 rounded-lg bg-zinc-900 border border-white/10 text-zinc-200 font-mono text-xs resize-none focus:outline-none focus:border-orange-500/50"
+            className="flex-1 w-full p-3 rounded-lg bg-[#464740] border border-white/10 text-zinc-200 font-mono text-xs resize-none focus:outline-none focus:border-primary/50"
           />
         </div>
       ) : (
@@ -1399,14 +1392,14 @@ function InlineCronPanel({ agent }: { agent: AgentInstance }) {
             <div className="text-zinc-500 text-sm text-center py-8">No records found</div>
           ) : (
             records.map(file => (
-              <div key={file.filename} className="rounded-lg border border-zinc-700/50 bg-zinc-800/30">
+              <div key={file.filename} className="rounded-lg border border-white/10/50 bg-[#464740]/30">
                 <button
                   onClick={() => setExpandedFile(expandedFile === file.filename ? null : file.filename)}
-                  className="w-full flex items-center gap-3 px-3 py-2 hover:bg-zinc-800/50 transition-colors"
+                  className="w-full flex items-center gap-3 px-3 py-2 hover:bg-[#464740] transition-colors"
                 >
-                  <FileIcon className="w-4 h-4 text-orange-400 flex-shrink-0" />
+                  <FileIcon className="w-4 h-4 text-primary flex-shrink-0" />
                   <span className="text-xs font-mono text-zinc-300 flex-1 text-left truncate">{file.filename}</span>
-                  <span className="text-xs text-zinc-600 flex-shrink-0">{formatTime(file.createdAt)}</span>
+                  <span className="text-xs text-zinc-500 flex-shrink-0">{formatTime(file.createdAt)}</span>
                   <ChevronDownIcon className={cn("w-4 h-4 text-zinc-400 transition-transform flex-shrink-0", expandedFile === file.filename && "rotate-180")} />
                 </button>
                 {expandedFile === file.filename && (
@@ -1416,13 +1409,13 @@ function InlineCronPanel({ agent }: { agent: AgentInstance }) {
                       const isUser = record.role === "user";
                       return (
                         <div key={idx} className={cn("flex gap-2", isUser ? "justify-end" : "justify-start")}>
-                          {!isUser && <div className="w-6 h-6 rounded-full bg-orange-500/20 border border-orange-500/30 flex items-center justify-center flex-shrink-0"><BotIcon className="w-3 h-3 text-orange-400" /></div>}
-                          <div className={cn("max-w-[80%] rounded-lg px-3 py-2 text-xs", isUser ? "bg-zinc-700 text-zinc-100" : "bg-zinc-800 text-zinc-200")}>
-                            {!isUser && think && <div className="text-purple-400 mb-1 border-b border-purple-500/30 pb-1 mb-1">{think}</div>}
+                          {!isUser && <div className="w-8 h-8 rounded-full bg-[#464740] border border-white/10 flex items-center justify-center flex-shrink-0"><BotIcon className="w-4 h-4 text-primary" /></div>}
+                          <div className={cn("max-w-[80%] rounded-lg px-3 py-2 text-xs", isUser ? "bg-[#464740] text-zinc-100" : "bg-[#464740] text-zinc-200")}>
+                            {!isUser && think && <div className="text-primary mb-1 border-b border-primary/30 pb-1 mb-1">{think}</div>}
                             <div>{rest}</div>
                             <div className="text-zinc-500 mt-1 text-[10px]">{formatTime(record.timestamp || "")}</div>
                           </div>
-                          {isUser && <div className="w-6 h-6 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center flex-shrink-0"><UserIcon className="w-3 h-3 text-blue-400" /></div>}
+                          {isUser && <div className="w-8 h-8 rounded-full bg-[#464740] border border-white/10 flex items-center justify-center flex-shrink-0"><UserIcon className="w-4 h-4 text-[#A7AB9C]" /></div>}
                         </div>
                       );
                     })}
@@ -1480,13 +1473,13 @@ function InlineMemoryPanel({ agent }: { agent: AgentInstance }) {
       <div className="flex gap-1 mb-3 flex-shrink-0">
         <button
           onClick={() => setActiveTab("memory")}
-          className={cn("px-3 py-1.5 rounded-lg text-xs font-medium", activeTab === "memory" ? "bg-orange-500/20 text-orange-400 border border-orange-500/30" : "bg-zinc-800 text-zinc-400")}
+          className={cn("px-3 py-1.5 rounded-lg text-xs font-medium", activeTab === "memory" ? "bg-primary/20 text-primary border border-primary/30" : "bg-[#464740] text-zinc-400")}
         >
           MEMORY.md
         </button>
         <button
           onClick={() => setActiveTab("history")}
-          className={cn("px-3 py-1.5 rounded-lg text-xs font-medium", activeTab === "history" ? "bg-orange-500/20 text-orange-400 border border-orange-500/30" : "bg-zinc-800 text-zinc-400")}
+          className={cn("px-3 py-1.5 rounded-lg text-xs font-medium", activeTab === "history" ? "bg-primary/20 text-primary border border-primary/30" : "bg-[#464740] text-zinc-400")}
         >
           history.jsonl
         </button>
@@ -1500,7 +1493,7 @@ function InlineMemoryPanel({ agent }: { agent: AgentInstance }) {
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        className="flex-1 w-full p-3 rounded-lg bg-zinc-900 border border-white/10 text-zinc-200 font-mono text-xs resize-none focus:outline-none focus:border-orange-500/50"
+        className="flex-1 w-full p-3 rounded-lg bg-[#464740] border border-white/10 text-zinc-200 font-mono text-xs resize-none focus:outline-none focus:border-primary/50"
       />
     </div>
   );
@@ -1559,14 +1552,14 @@ function InlineEnvPanel({ agent }: { agent: AgentInstance }) {
         </button>
       </div>
       {feedback && (
-        <div className={cn("mb-2 p-2 rounded text-xs", feedback.type === "success" ? "bg-green-500/10 text-green-400" : "bg-red-500/10 text-red-400")}>
+        <div className={cn("mb-2 p-2 rounded text-xs", feedback.type === "success" ? "bg-[#EDD7AD]/10 text-success" : "bg-primary/10 text-primary")}>
           {feedback.message}
         </div>
       )}
       <textarea
         value={envContent}
         onChange={(e) => setEnvContent(e.target.value)}
-        className="flex-1 w-full p-3 rounded-lg bg-zinc-900 border border-white/10 text-zinc-200 font-mono text-xs resize-none focus:outline-none focus:border-orange-500/50"
+        className="flex-1 w-full p-3 rounded-lg bg-[#464740] border border-white/10 text-zinc-200 font-mono text-xs resize-none focus:outline-none focus:border-primary/50"
         placeholder="# Environment variables&#10;API_KEY=your-key&#10DEBUG=true"
       />
     </div>
@@ -1612,10 +1605,10 @@ function InlineLogsPanel({ agent }: { agent: AgentInstance }) {
 
   const getLogStyle = (content: string) => {
     const lower = content.toLowerCase();
-    if (/\b(error|exception|fatal)\b/.test(lower)) return "text-red-400";
-    if (/\b(warn|warning)\b/.test(lower)) return "text-amber-400";
-    if (/\b(debug|trace)\b/.test(lower)) return "text-zinc-600";
-    if (/\b(info)\b/.test(lower)) return "text-blue-400";
+    if (/\b(error|exception|fatal)\b/.test(lower)) return "text-primary";
+    if (/\b(warn|warning)\b/.test(lower)) return "text-[#EDD7AD]";
+    if (/\b(debug|trace)\b/.test(lower)) return "text-zinc-500";
+    if (/\b(info)\b/.test(lower)) return "text-accent";
     return "text-zinc-300";
   };
 
@@ -1623,7 +1616,7 @@ function InlineLogsPanel({ agent }: { agent: AgentInstance }) {
     <div className="h-full flex flex-col">
       <div className="flex items-center justify-between mb-2 flex-shrink-0">
         <div className="flex items-center gap-2">
-          <span className={cn("h-2 w-2 rounded-full", isConnected ? "bg-green-400 animate-status-pulse" : "bg-red-400")} />
+          <span className={cn("h-2 w-2 rounded-full", isConnected ? "bg-[#EDD7AD] animate-status-pulse" : "bg-primary")} />
           <span className="text-xs text-zinc-400">{isConnected ? "Connected" : "Disconnected"}</span>
         </div>
         <button
@@ -1635,11 +1628,11 @@ function InlineLogsPanel({ agent }: { agent: AgentInstance }) {
       </div>
       <div ref={containerRef} className="flex-1 overflow-y-auto bg-zinc-950 rounded-lg p-2 space-y-0.5 min-h-0">
         {logs.length === 0 ? (
-          <div className="text-zinc-600 text-xs text-center py-4">Waiting for logs...</div>
+          <div className="text-zinc-500 text-xs text-center py-4">Waiting for logs...</div>
         ) : (
           logs.map((log, idx) => (
-            <div key={idx} className="flex gap-2 text-xs font-mono hover:bg-zinc-900/50 px-1 py-0.5 rounded">
-              <span className="text-zinc-600 flex-shrink-0">{formatTime(log.timestamp)}</span>
+            <div key={idx} className="flex gap-2 text-xs font-mono hover:bg-[#52524d]/50 px-1 py-0.5 rounded">
+              <span className="text-zinc-500 flex-shrink-0">{formatTime(log.timestamp)}</span>
               <span className={cn("flex-1 truncate", getLogStyle(log.content), log.stream === "stderr" && "text-zinc-400")}>
                 {log.content}
               </span>
