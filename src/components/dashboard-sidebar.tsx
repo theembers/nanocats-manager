@@ -14,6 +14,7 @@ export function DashboardSidebar({ agents, onStatusChange }: DashboardSidebarPro
   const [version, setVersion] = useState<string>("");
   const [updating, setUpdating] = useState(false);
   const [updateMsg, setUpdateMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [startStopLoading, setStartStopLoading] = useState(false);
 
   useEffect(() => {
     fetchVersion();
@@ -54,8 +55,25 @@ export function DashboardSidebar({ agents, onStatusChange }: DashboardSidebarPro
     }
   };
 
+  const handleToggleAll = async () => {
+    if (startStopLoading) return;
+    setStartStopLoading(true);
+
+    const hasRunning = agents.some(a => a.status === "running");
+    const endpoint = hasRunning ? "/api/agents/stop-all" : "/api/agents/start-all";
+
+    try {
+      await fetch(endpoint, { method: "POST" });
+      onStatusChange();
+    } catch (error) {
+      console.error("Failed to toggle agents:", error);
+    } finally {
+      setStartStopLoading(false);
+    }
+  };
+
   return (
-    <div className="h-full flex flex-col bg-zinc-950 border-r border-white/5">
+    <div className="h-full flex flex-col bg-[#3a3a38] border-r border-white/5" suppressHydrationWarning>
       <div className="h-14 px-4 flex items-center border-b border-white/5">
         <img
           src="/nanocats_logo.png"
@@ -66,7 +84,7 @@ export function DashboardSidebar({ agents, onStatusChange }: DashboardSidebarPro
 
       <div className="px-3 py-2 border-b border-white/5">
         <Link href="/agents/new">
-          <button className="sidebar-btn sidebar-btn-orange">
+          <button className="sidebar-btn sidebar-btn-primary" suppressHydrationWarning>
             <PlusIcon className="w-4 h-4" />
             New Agent
           </button>
@@ -75,7 +93,7 @@ export function DashboardSidebar({ agents, onStatusChange }: DashboardSidebarPro
 
       <div className="px-3 py-2 border-b border-white/5">
         <Link href="/manager">
-          <button className="sidebar-btn sidebar-btn-blue">
+          <button className="sidebar-btn sidebar-btn-primary" suppressHydrationWarning>
             <ShieldIcon className="w-4 h-4" />
             Manager Console
           </button>
@@ -83,10 +101,28 @@ export function DashboardSidebar({ agents, onStatusChange }: DashboardSidebarPro
       </div>
 
       <div className="flex-1 overflow-y-auto p-3 space-y-2">
-        <div className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest mb-3 px-1">
-          Agents ({agents.length})
-        </div>
-        {agents.length === 0 ? (
+<div className="flex items-center justify-between px-1 mb-3" suppressHydrationWarning>
+            <div className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest" suppressHydrationWarning>
+              Agents ({agents.length})
+            </div>
+            {agents.length > 0 && (
+              <button
+                onClick={handleToggleAll}
+                disabled={startStopLoading}
+                className={`icon-btn ${agents.some(a => a.status === "running") ? "icon-btn-success" : "icon-btn-gray"}`}
+                title={agents.some(a => a.status === "running") ? "Stop All" : "Start All"}
+              >
+                {startStopLoading ? (
+                  <RefreshIcon className="w-4 h-4 animate-spin" />
+                ) : agents.some(a => a.status === "running") ? (
+                  <StopIcon className="w-4 h-4" />
+                ) : (
+                  <PlayIcon className="w-4 h-4" />
+                )}
+              </button>
+            )}
+          </div>
+          {agents.length === 0 ? (
           <div className="text-center py-8 text-zinc-500 text-sm">
             No agents
           </div>
@@ -110,7 +146,7 @@ export function DashboardSidebar({ agents, onStatusChange }: DashboardSidebarPro
         <button
           onClick={handleUpdate}
           disabled={updating}
-          className="sidebar-btn sidebar-btn-green"
+          className="sidebar-btn sidebar-btn-primary"
         >
           {updating ? (
             <>
@@ -127,7 +163,7 @@ export function DashboardSidebar({ agents, onStatusChange }: DashboardSidebarPro
         {updateMsg && (
           <div
             className={`text-[10px] text-center ${
-              updateMsg.type === "success" ? "text-green-400" : "text-red-400"
+              updateMsg.type === "success" ? "text-[#EDD7AD]" : "text-primary"
             }`}
           >
             {updateMsg.text}
@@ -165,6 +201,22 @@ function RefreshIcon({ className }: { className?: string }) {
       <path d="M3 3v5h5"/>
       <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
       <path d="M16 16h5v5"/>
+    </svg>
+  );
+}
+
+function PlayIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="5 3 19 12 5 21 5 3" />
+    </svg>
+  );
+}
+
+function StopIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2" />
     </svg>
   );
 }

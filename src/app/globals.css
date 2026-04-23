@@ -133,8 +133,8 @@
 
 /* Dark mode 与 light mode 保持一致 */
 .dark {
-  --background: #464740;
-  --background-elevated: #52524d;
+  --background: #3a3a38;
+  --background-elevated: #464740;
   --foreground: #fafafa;
   --card: #464740;
   --card-foreground: #fafafa;
@@ -158,7 +158,7 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
+body {
     @apply bg-background text-foreground;
     background-color: #3a3a38;
   }
@@ -185,13 +185,13 @@
 
   /* 扁平导航 */
   .glass-nav {
-    background: #3a3a38;
+    background: #464740;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   /* 扁平头部 */
   .glass-header {
-    background: #3a3a38;
+    background: #464740;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 
