@@ -102,20 +102,20 @@ export function DraggableAgentCard({ agent, onStatusChange }: DraggableAgentCard
     <div
       draggable
       onDragStart={handleDragStart}
-      className="glass-card rounded-lg overflow-hidden cursor-grab active:cursor-grabbing hover:border-orange-500/30 transition-all duration-200 group p-3"
+      className="glass-card rounded-lg overflow-hidden cursor-grab active:cursor-grabbing hover:border-primary/30 transition-all duration-200 group p-3"
     >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2 min-w-0">
-          <div className="w-8 h-8 rounded-full overflow-hidden bg-zinc-700">
+          <div className="w-8 h-8 rounded-full overflow-hidden bg-[#464740]">
             <div className="w-full h-full" dangerouslySetInnerHTML={{ __html: avatarSvg }} />
           </div>
           <h3 className="font-heading font-semibold text-white text-sm truncate uppercase flex items-center gap-1.5">
             {agent.name}
             <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
               isRunning
-                ? "bg-green-500"
+                ? "bg-[#EDD7AD]"
                 : isError
-                ? "bg-red-500"
+                ? "bg-primary"
                 : "bg-zinc-500"
             }`} />
           </h3>
@@ -152,7 +152,7 @@ export function DraggableAgentCard({ agent, onStatusChange }: DraggableAgentCard
         <div className="text-zinc-400 mb-1">
           PORT {agent.port} · PID {agent.pid || "—"} · MEM {formatMemory(memoryKB)}
         </div>
-        <div className="text-orange-400">
+        <div className="text-primary">
           SKILLS {skillsCount}
         </div>
       </div>

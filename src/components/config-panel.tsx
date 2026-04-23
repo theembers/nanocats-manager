@@ -113,7 +113,7 @@ export function ConfigPanel({ activeAgents, onRemoveAgent }: ConfigPanelProps) {
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 rounded-2xl bg-zinc-800/50 flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 rounded-2xl bg-[#464740]/50 flex items-center justify-center mx-auto mb-4">
             <SettingsIcon className="w-8 h-8 text-zinc-600" />
           </div>
           <h3 className="text-lg font-medium text-zinc-400 mb-2">Empty Configuration</h3>
@@ -133,15 +133,15 @@ export function ConfigPanel({ activeAgents, onRemoveAgent }: ConfigPanelProps) {
               onClick={() => setSelectedAgent(agent.name)}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                 selectedAgent === agent.name
-                  ? "bg-orange-500/20 text-orange-400 border border-orange-500/30"
-                  : "bg-zinc-800 text-zinc-400 border border-transparent hover:text-zinc-200"
+                  ? "bg-[#A7AB9C]/20 text-[#A7AB9C] border border-[#A7AB9C]/30"
+                  : "bg-[#464740] text-zinc-400 border border-white/10 hover:text-zinc-200"
               }`}
             >
-              <div className={`w-2 h-2 rounded-full ${agent.status === "running" ? "bg-green-400" : "bg-zinc-500"}`} />
+              <div className={`w-2 h-2 rounded-full ${agent.status === "running" ? "bg-[#EDD7AD]" : "bg-zinc-500"}`} />
               {agent.name}
               <button
                 onClick={(e) => { e.stopPropagation(); onRemoveAgent(agent.name); }}
-                className="ml-1 p-0.5 rounded hover:bg-zinc-700"
+                className="ml-1 p-0.5 rounded hover:bg-[#52524d]"
               >
                 <CloseIcon className="w-3 h-3" />
               </button>
@@ -150,7 +150,7 @@ export function ConfigPanel({ activeAgents, onRemoveAgent }: ConfigPanelProps) {
           {selectedAgent && (
             <button
               onClick={() => router.push(`/agents/${selectedAgent}/manager`)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-orange-500/20 text-orange-400 border border-orange-500/30 hover:bg-orange-500/30 transition-all whitespace-nowrap"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 transition-all whitespace-nowrap"
             >
               <ShieldIcon className="w-4 h-4" />
               Manager Console
@@ -182,7 +182,7 @@ export function ConfigPanel({ activeAgents, onRemoveAgent }: ConfigPanelProps) {
 
             {feedback && feedback.agent === selectedAgent && (
               <div className={`mx-3 mt-3 p-2 rounded-lg text-sm ${
-                feedback.type === "success" ? "bg-green-500/10 text-green-400" : "bg-red-500/10 text-red-400"
+                feedback.type === "success" ? "bg-[#EDD7AD]/10 text-success" : "bg-primary/10 text-destructive"
               }`}>
                 {feedback.message}
               </div>
@@ -192,7 +192,7 @@ export function ConfigPanel({ activeAgents, onRemoveAgent }: ConfigPanelProps) {
               <textarea
                 value={configData[selectedAgent].content}
                 onChange={(e) => updateConfig(selectedAgent, e.target.value)}
-                className="w-full h-full min-h-[400px] bg-black/30 border border-zinc-800 rounded-lg px-4 py-3 text-sm font-mono text-zinc-300 focus:outline-none focus:border-orange-500/50 resize-none"
+                className="w-full h-full min-h-[400px] bg-[#2a2a28]/50 border border-white/10 rounded-lg px-4 py-3 text-sm font-mono text-zinc-300 focus:outline-none focus:border-primary/50 resize-none"
                 spellCheck={false}
               />
             </div>

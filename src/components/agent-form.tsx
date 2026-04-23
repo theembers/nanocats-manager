@@ -66,14 +66,14 @@ export function AgentForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-lg">
+        <div className="bg-primary/10 border border-primary/20 text-primary px-4 py-3 rounded-lg">
           {error}
         </div>
       )}
 
       <div className="space-y-2">
         <label htmlFor="name" className="block text-sm font-medium text-zinc-300">
-          Agent Name <span className="text-orange-400">*</span>
+          Agent Name <span className="text-primary">*</span>
         </label>
         <input
           id="name"
@@ -83,7 +83,7 @@ export function AgentForm() {
           onChange={handleChange}
           placeholder="my-agent"
           required
-          className="w-full px-4 py-2.5 rounded-lg bg-zinc-800 border border-white/10 text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 transition-all"
+          className="w-full px-4 py-2.5 rounded-lg bg-[#464740] border border-white/10 text-white placeholder-zinc-500 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
         />
       </div>
 
@@ -97,7 +97,7 @@ export function AgentForm() {
           type="text"
           value={formData.basePath}
           readOnly
-          className="w-full px-4 py-2.5 rounded-lg bg-zinc-900 border border-white/5 text-zinc-500 cursor-not-allowed"
+          className="w-full px-4 py-2.5 rounded-lg bg-[#464740] border border-white/10 text-zinc-500 cursor-not-allowed"
         />
         <p className="text-sm text-zinc-500">
           Directory where agent workspace will be created (fixed to ~/agents/)
@@ -115,7 +115,7 @@ export function AgentForm() {
           value={formData.port || ""}
           onChange={handleChange}
           placeholder="18790"
-          className="w-full px-4 py-2.5 rounded-lg bg-zinc-800 border border-white/10 text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 transition-all"
+          className="w-full px-4 py-2.5 rounded-lg bg-[#464740] border border-white/10 text-white placeholder-zinc-500 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
         />
         <p className="text-sm text-zinc-500">
           Leave empty to auto-generate next available port
@@ -132,7 +132,7 @@ export function AgentForm() {
           type="text"
           value={formData.model}
           onChange={handleChange}
-          className="w-full px-4 py-2.5 rounded-lg bg-zinc-800 border border-white/10 text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 transition-all"
+          className="w-full px-4 py-2.5 rounded-lg bg-[#464740] border border-white/10 text-white placeholder-zinc-500 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
         />
       </div>
 
@@ -146,7 +146,7 @@ export function AgentForm() {
           type="text"
           value={formData.provider}
           onChange={handleChange}
-          className="w-full px-4 py-2.5 rounded-lg bg-zinc-800 border border-white/10 text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 transition-all"
+          className="w-full px-4 py-2.5 rounded-lg bg-[#464740] border border-white/10 text-white placeholder-zinc-500 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
         />
       </div>
 
@@ -161,7 +161,7 @@ export function AgentForm() {
           value={formData.apiKey}
           onChange={handleChange}
           placeholder="sk-..."
-          className="w-full px-4 py-2.5 rounded-lg bg-zinc-800 border border-white/10 text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 transition-all"
+          className="w-full px-4 py-2.5 rounded-lg bg-[#464740] border border-white/10 text-white placeholder-zinc-500 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
         />
         <p className="text-sm text-zinc-500">
           Used for both provider API key and MCP MiniMax API key
@@ -172,7 +172,7 @@ export function AgentForm() {
         <button
           type="submit"
           disabled={loading}
-          className="px-6 py-2.5 rounded-lg bg-orange-500/20 border border-orange-500/50 text-orange-300 hover:bg-orange-500/30 hover:border-orange-400 font-medium disabled:opacity-50 flex items-center gap-2 transition-all"
+          className="px-6 py-2.5 rounded-lg bg-primary/20 border border-primary/50 text-primary hover:bg-primary/30 hover:border-primary font-medium disabled:opacity-50 flex items-center gap-2 transition-all"
         >
           {loading ? (
             <>

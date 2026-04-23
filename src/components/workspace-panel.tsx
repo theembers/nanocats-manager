@@ -13,7 +13,7 @@ export function WorkspacePanel({ activeAgents, onRemoveAgent }: WorkspacePanelPr
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 rounded-2xl bg-zinc-800/50 flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 rounded-2xl bg-[#464740]/50 flex items-center justify-center mx-auto mb-4">
             <BotIcon className="w-8 h-8 text-zinc-600" />
           </div>
           <h3 className="text-lg font-medium text-zinc-400 mb-2">Empty Workspace</h3>
