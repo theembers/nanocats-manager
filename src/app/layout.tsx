@@ -32,7 +32,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${spaceGrotesk.variable} ${dmSans.variable} font-sans antialiased`} suppressHydrationWarning>
         {/* 墨黑背景基底 */}
-        <div className="fixed inset-0 bg-[#0a0a0b] -z-20" />
+        <div className="fixed inset-0 bg-[#464740] -z-20" />
         
         {/* 扁平背景 - 无渐变光晕 */}
 

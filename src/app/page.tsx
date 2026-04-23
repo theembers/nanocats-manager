@@ -98,24 +98,13 @@ export default function DashboardPage() {
         onDrop={handleDrop}
       >
         <div className="h-14 px-4 flex items-center justify-end gap-4 border-b border-white/5">
-          {workspaceAgents.length > 0 && (
-            <div className="flex items-center gap-1">
-              <span className="px-3 py-1.5 rounded-lg bg-orange-500/20 text-orange-400 text-sm font-medium border border-orange-500/30">
-                <WorkspaceIcon className="w-4 h-4 inline mr-1.5" />
-                Workspace
-                <span className="ml-1.5 px-1.5 py-0.5 rounded bg-orange-500/30 text-xs">
-                  {workspaceAgents.length}
-                </span>
-              </span>
-            </div>
-          )}
         </div>
 
-        <div className={`flex-1 overflow-hidden transition-all ${isDragOver ? "bg-orange-500/5" : ""}`}>
+        <div className={`flex-1 overflow-hidden transition-all ${isDragOver ? "bg-primary/5" : ""}`}>
           {isDragOver && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-              <div className="glass-card px-8 py-4 rounded-xl border-2 border-dashed border-orange-500/50">
-                <p className="text-orange-400 font-medium">Drop to add to {activeTab} (max 4)</p>
+              <div className="glass-card px-8 py-4 rounded-xl border-2 border-dashed border-primary/50">
+                <p className="text-primary font-medium">Drop to add to {activeTab} (max 4)</p>
               </div>
             </div>
           )}

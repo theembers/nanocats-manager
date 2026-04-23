@@ -183,8 +183,8 @@ export default function ManagerPage() {
         <div
           className={`p-4 rounded-lg text-sm ${
             feedback.type === "success"
-              ? "bg-green-500/10 text-green-400 border border-green-500/20"
-              : "bg-red-500/10 text-red-400 border border-red-500/20"
+? "bg-[#EDD7AD]/10 text-[#EDD7AD] border border-[#EDD7AD]/20"
+          : "bg-primary/10 text-primary border border-primary/20"
           }`}
         >
           {feedback.message}
@@ -192,22 +192,22 @@ export default function ManagerPage() {
       )}
 
       <Tabs defaultValue="skills" className="space-y-4">
-        <TabsList className="flex-wrap h-auto bg-zinc-800 border border-white/10 p-1 rounded-lg">
+        <TabsList className="flex-wrap h-auto bg-[#464740] border border-white/10 p-1 rounded-lg">
           <TabsTrigger
             value="skills"
-            className="data-[state=active]:bg-orange-500 data-[state=active]:text-white rounded-md px-4 py-2.5 text-zinc-400 text-sm font-medium"
+            className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-md px-4 py-2.5 text-zinc-400 text-sm font-medium"
           >
             Shared Skills
           </TabsTrigger>
           <TabsTrigger
             value="mcp"
-            className="data-[state=active]:bg-orange-500 data-[state=active]:text-white rounded-md px-4 py-2.5 text-zinc-400 text-sm font-medium"
+            className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-md px-4 py-2.5 text-zinc-400 text-sm font-medium"
           >
             MCP Config
           </TabsTrigger>
           <TabsTrigger
             value="members"
-            className="data-[state=active]:bg-orange-500 data-[state=active]:text-white rounded-md px-4 py-2.5 text-zinc-400 text-sm font-medium"
+            className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-md px-4 py-2.5 text-zinc-400 text-sm font-medium"
           >
             Members ({members.length})
           </TabsTrigger>
@@ -231,7 +231,7 @@ export default function ManagerPage() {
                   {skills.map((skill) => (
                     <div
                       key={skill.path}
-                      className="flex items-center justify-between p-4 rounded-lg bg-zinc-800/50 border border-white/10"
+                      className="flex items-center justify-between p-4 rounded-lg bg-[#464740]/50 border border-white/10"
                     >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
@@ -240,8 +240,8 @@ export default function ManagerPage() {
                             variant={skill.enabled ? "default" : "secondary"}
                             className={
                               skill.enabled
-                                ? "bg-green-500/20 text-green-400 border-green-500/30"
-                                : "bg-zinc-700 text-zinc-400"
+                                ? "bg-[#EDD7AD]/20 text-[#EDD7AD] border-[#EDD7AD]/30"
+                                : "bg-[#464740] text-zinc-400"
                             }
                           >
                             {skill.enabled ? "Enabled" : "Disabled"}
@@ -256,13 +256,13 @@ export default function ManagerPage() {
                       <div className="flex items-center gap-2 ml-4">
                         <button
                           onClick={() => toggleSkill(skill.path, !skill.enabled)}
-                          className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors bg-zinc-700 hover:bg-zinc-600 text-zinc-300"
+                          className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors bg-[#52524d] hover:bg-[#464740] text-zinc-300"
                         >
                           {skill.enabled ? "Disable" : "Enable"}
                         </button>
                         <button
                           onClick={() => deleteSkill(skill.path)}
-                          className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors bg-red-500/20 hover:bg-red-500/30 text-red-400"
+                          className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors bg-primary/20 text-primary"
                         >
                           Delete
                         </button>
@@ -315,7 +315,7 @@ export default function ManagerPage() {
                   {members.map((member) => (
                     <div
                       key={member.name}
-                      className="flex items-center justify-between p-4 rounded-lg bg-zinc-800/50 border border-white/10"
+                      className="flex items-center justify-between p-4 rounded-lg bg-[#464740]/50 border border-white/10"
                     >
                       <div className="flex items-center gap-3">
                         <span className="font-medium text-white">{member.name}</span>
@@ -323,8 +323,8 @@ export default function ManagerPage() {
                           variant={member.status === "running" ? "default" : "secondary"}
                           className={
                             member.status === "running"
-                              ? "bg-green-500/20 text-green-400 border-green-500/30"
-                              : "bg-zinc-700 text-zinc-400"
+                              ? "bg-[#EDD7AD]/20 text-[#EDD7AD] border-[#EDD7AD]/30"
+                              : "bg-[#464740] text-zinc-400"
                           }
                         >
                           {member.status}
@@ -332,7 +332,7 @@ export default function ManagerPage() {
                       </div>
                       <a
                         href={`/agents/${member.name}`}
-                        className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors bg-zinc-700 hover:bg-zinc-600 text-zinc-300"
+                        className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors bg-[#52524d] hover:bg-[#464740] text-zinc-300"
                       >
                         View
                       </a>
