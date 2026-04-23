@@ -65,31 +65,19 @@ export function JsonViewer({
   const darkTheme = {
     "--w-rjv-background-color": "transparent",
     "--w-rjv-color": "#ffffff",
-    "--w-rjv-key-number": "#60a5fa",
-    "--w-rjv-key-string": "#4ade80",
-    "--w-rjv-type-string-color": "#4ade80",
-    "--w-rjv-type-int-color": "#60a5fa",
-    "--w-rjv-type-float-color": "#60a5fa",
-    "--w-rjv-type-bigint-color": "#60a5fa",
-    "--w-rjv-type-boolean-color": "#f472b6",
-    "--w-rjv-type-date-color": "#fbbf24",
-    "--w-rjv-type-url-color": "#38bdf8",
-    "--w-rjv-type-null-color": "#c084fc",
-    "--w-rjv-type-nan-color": "#fb923c",
-    "--w-rjv-type-undefined-color": "#e5e7eb",
-    "--w-rjv-arrow-color": "#fb923c",
-    "--w-rjv-edit-color": "#ffffff",
-    "--w-rjv-info-color": "#ffffff",
-    "--w-rjv-curlybraces-color": "#ffffff",
-    "--w-rjv-colon-color": "#ffffff",
-    "--w-rjv-brackets-color": "#ffffff",
-    "--w-rjv-ellipsis-color": "#fb923c",
-    "--w-rjv-quotes-color": "#4ade80",
-    "--w-rjv-quotes-string-color": "#4ade80",
+    "--w-rjv-key-number": "#A7AB9C",
+    "--w-rjv-key-string": "#EDD7AD",
+    "--w-rjv-type-string-color": "#EDD7AD",
+    "--w-rjv-type-int-color": "#A7AB9C",
+    "--w-rjv-type-float-color": "#A7AB9C",
+    "--w-rjv-type-bigint-color": "#A7AB9C",
+    "--w-rjv-type-boolean-color": "#EDD7AD",
+    "--w-rjv-quotes-color": "#EDD7AD",
+    "--w-rjv-quotes-string-color": "#EDD7AD",
   };
 
   const renderViewMode = () => (
-    <div className="rounded-lg bg-zinc-900/50 p-4 overflow-auto max-h-[700px]">
+    <div className="rounded-lg bg-[#464740]/50 p-4 overflow-auto max-h-[700px]">
       {parsed !== null ? (
         <JsonView
           value={parsed}
@@ -98,7 +86,7 @@ export function JsonViewer({
           style={darkTheme as React.CSSProperties}
         />
       ) : (
-        <pre className="text-red-400 text-sm whitespace-pre-wrap">{value}</pre>
+        <pre className="text-destructive text-sm whitespace-pre-wrap">{value}</pre>
       )}
     </div>
   );
@@ -110,7 +98,7 @@ export function JsonViewer({
         onChange?.(e.target.value);
         setError(null);
       }}
-      className="w-full min-h-[700px] p-4 rounded-lg bg-zinc-900 border border-white/10 text-zinc-200 font-mono text-sm resize-none focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 transition-all"
+      className="w-full min-h-[700px] p-4 rounded-lg bg-[#464740] border border-white/10 text-zinc-200 font-mono text-sm resize-none focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
       style={{
         fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
       }}
@@ -128,7 +116,7 @@ export function JsonViewer({
         )}
         <CardContent>
           {error && (
-            <div className="mb-4 p-3 rounded-md text-sm bg-red-500/10 text-red-400 border border-red-500/20">
+            <div className="mb-4 p-3 rounded-md text-sm bg-primary/10 text-primary border border-primary/20">
               {error}
             </div>
           )}
@@ -207,15 +195,15 @@ export function JsonViewer({
           <div
             className={`mb-4 p-3 rounded-md text-sm ${
               feedback.type === "success"
-                ? "bg-green-500/10 text-green-400 border border-green-500/20"
-                : "bg-red-500/10 text-red-400 border border-red-500/20"
+                ? "bg-[#EDD7AD]/10 text-[#EDD7AD] border border-[#EDD7AD]/20"
+                : "bg-primary/10 text-primary border border-primary/20"
             }`}
           >
             {feedback.message}
           </div>
         )}
         {error && (
-          <div className="mb-4 p-3 rounded-md text-sm bg-red-500/10 text-red-400 border border-red-500/20">
+          <div className="mb-4 p-3 rounded-md text-sm bg-primary/10 text-primary border border-primary/20">
             {error}
           </div>
         )}
