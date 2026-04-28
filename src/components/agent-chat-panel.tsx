@@ -584,6 +584,7 @@ function PanelHeader({ agent, onClose, avatarSvg, showConfig, onToggleConfig }: 
 
 function MessageBubble({ msg, onImagePreview: _onImagePreview }: { msg: Message; onImagePreview: (img: string | null) => void }) {
   const hasBotContent = msg.type === "bot" && (msg.content || msg.isStreaming || msg.toolCalls?.length || msg.toolExecuting?.length || msg.thinkContent || msg.attachments?.length);
+  const isHistory = (msg as any).isHistory;
 
   if (msg.type === "tool" && msg.toolResult) {
     return (
@@ -592,7 +593,7 @@ function MessageBubble({ msg, onImagePreview: _onImagePreview }: { msg: Message;
           <ToolIcon className="w-4 h-4 text-[#A7AB9C]" />
         </div>
         <div className="max-w-[80%] flex flex-col items-start">
-          <ToolResultBlock toolResult={msg.toolResult} />
+          <ToolResultBlock toolResult={msg.toolResult} defaultExpanded={!isHistory} />
           <MessageMeta timestamp={msg.timestamp} alignRight={false} />
         </div>
       </div>
@@ -678,18 +679,25 @@ function getDisplayText(value: unknown): string {
   return JSON.stringify(value);
 }
 
-function ToolResultBlock({ toolResult }: { toolResult: ToolResult }) {
-  const [isExpanded, setIsExpanded] = useState(false);
+function ToolResultBlock({ toolResult, defaultExpanded }: { toolResult: ToolResult; defaultExpanded?: boolean }) {
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded ?? false);
   const contentStr = getDisplayText(toolResult.content);
 
   return (
     <div className="rounded-lg border border-success/30 bg-[#EDD7AD]/10 overflow-hidden">
-      <div className="w-full flex items-center gap-2 px-3 py-1.5 text-success text-xs font-medium hover:bg-[#EDD7AD]/20">
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full flex items-center gap-2 px-3 py-1.5 text-success text-xs font-medium hover:bg-[#EDD7AD]/20"
+      >
         <ToolIcon className="w-3.5 h-3.5 text-success" />
-      </div>
-      <div className="px-3 py-1.5 border-t border-success/30">
-        <pre className="text-xs text-success/80 whitespace-pre-wrap break-all">{contentStr}</pre>
-      </div>
+        <span className="font-mono text-success/80">{toolResult.name}</span>
+        <ChevronDownIcon className={cn("w-3.5 h-3.5 ml-auto transition-transform", isExpanded && "rotate-180")} />
+      </button>
+      {isExpanded && (
+        <div className="px-3 py-1.5 border-t border-success/30">
+          <pre className="text-xs text-success/80 whitespace-pre-wrap break-all">{contentStr}</pre>
+        </div>
+      )}
     </div>
   );
 }
@@ -724,22 +732,32 @@ function MemoizedMarkdown({ content }: { content: string }) {
           ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
           ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
           li: ({ children }) => <li className="text-zinc-300">{children}</li>,
+          pre: ({ children }) => (
+            <pre className="whitespace-pre-wrap overflow-x-auto bg-[#464740] p-3 rounded-lg border border-white/10 mb-2 text-xs font-mono">
+              {children}
+            </pre>
+          ),
           code: ({ className, children, ...props }) => {
             const match = /language-(\w+)/.exec(className || '');
             const isInline = !match;
             return isInline ? (
               <code className="bg-[#464740]/50 px-1.5 py-0.5 rounded text-primary-light text-xs font-mono" {...props}>{children}</code>
             ) : (
-              <code className={cn(className, "block bg-[#464740] p-3 rounded-lg overflow-x-auto text-xs font-mono border border-white/10 mb-2")} {...props}>{children}</code>
+              <code className={cn(className)} {...props}>{children}</code>
             );
           },
-          pre: ({ children }) => <>{children}</>,
           a: ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary-hover underline">{children}</a>,
           strong: ({ children }) => <strong className="font-semibold text-white">{children}</strong>,
           em: ({ children }) => <em className="italic">{children}</em>,
           h1: ({ children }) => <h1 className="text-xl font-bold text-white mb-2">{children}</h1>,
           h2: ({ children }) => <h2 className="text-lg font-bold text-white mb-2">{children}</h2>,
           h3: ({ children }) => <h3 className="text-base font-semibold text-white mb-1">{children}</h3>,
+          table: ({ children }) => <table className="w-full border-collapse mb-2 text-xs">{children}</table>,
+          thead: ({ children }) => <thead className="bg-white/5">{children}</thead>,
+          tbody: ({ children }) => <tbody>{children}</tbody>,
+          tr: ({ children }) => <tr className="border-b border-white/10">{children}</tr>,
+          th: ({ children }) => <th className="px-3 py-1.5 text-left font-medium text-zinc-300 border-r border-white/10 last:border-r-0">{children}</th>,
+          td: ({ children }) => <td className="px-3 py-1.5 text-zinc-400 border-r border-white/10 last:border-r-0">{children}</td>,
           blockquote: ({ children }) => <blockquote className="border-l-4 border-white/10 pl-4 italic text-zinc-400 mb-2">{children}</blockquote>,
           hr: () => <hr className="border-white/10 my-4" />,
         }}
